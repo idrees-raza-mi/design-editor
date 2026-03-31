@@ -29,7 +29,9 @@
   --left-panel-width: 240px;
 }
 
-html, body, #design-editor {
+html,
+body,
+#design-editor {
   height: 100%;
   width: 100%;
   overflow: hidden;
@@ -79,32 +81,29 @@ html, body, #design-editor {
   gap: 24px;
 }
 
-.editor-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-}
-
 .back-button {
-  background: none;
-  border: none;
-  color: var(--color-text-secondary);
-  font-size: 13px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: background 0.15s;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
 }
 
 .back-button:hover {
-  background: #f0f0f0;
+  background: var(--color-bg-hover);
+  border-color: var(--color-text-secondary);
 }
 
-.back-arrow {
+.back-button .back-arrow {
   font-size: 14px;
+  line-height: 1;
 }
 
 .tab-button {
@@ -203,6 +202,7 @@ html, body, #design-editor {
     opacity: 0;
     transform: translateX(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -287,6 +287,7 @@ html, body, #design-editor {
     opacity: 0;
     transform: translateY(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -474,21 +475,28 @@ html, body, #design-editor {
 }
 
 .back-btn {
-  background: none;
-  border: none;
-  color: var(--color-text-secondary);
-  font-size: 13px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: background 0.15s;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
 }
 
 .back-btn:hover {
-  background: #f0f0f0;
+  background: var(--color-bg-hover);
+  border-color: var(--color-text-secondary);
+}
+
+.back-btn .back-arrow {
+  font-size: 14px;
+  line-height: 1;
 }
 
 .edit-title {
@@ -1078,7 +1086,9 @@ html, body, #design-editor {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ========================================
@@ -1465,10 +1475,69 @@ html, body, #design-editor {
 }
 
 /* ========================================
+   Text & Shape Editor Position Inputs
+   ======================================== */
+
+.position-inputs {
+  display: flex;
+  gap: 12px;
+  padding: 8px 12px 12px;
+}
+
+.position-inputs .pos-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.position-inputs .pos-input label {
+  font-size: 11px;
+  color: #888;
+}
+
+.position-inputs .pos-input input {
+  width: 70px;
+  padding: 8px 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.position-inputs .pos-input input:focus {
+  outline: none;
+  border-color: #8B7355;
+}
+
+.panel-content.text-editor-panel .action-btn--danger,
+.panel-content.shape-editor-panel .action-btn--danger {
+  color: #dc3545;
+  background: white;
+  border: none;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(100% - 24px);
+  margin-left: auto;
+  margin-right: auto;
+  cursor: pointer;
+  transition: text-shadow 0.2s ease;
+}
+
+.panel-content.text-editor-panel .action-btn--danger:hover,
+.panel-content.shape-editor-panel .action-btn--danger:hover {
+  text-shadow: 0 0 8px rgba(220, 53, 69, 0.5);
+}
+
+/* ========================================
    Print Styles
    ======================================== */
 
 @media print {
+
   .topbar,
   .bottom-bar,
   .left-panel,
@@ -1491,142 +1560,165 @@ html, body, #design-editor {
     padding: 0;
   }
 
-.canvas-wrapper {
-  box-shadow: none;
-  border: 1px solid #ccc;
-}
+  .canvas-wrapper {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
 
-/* ========================================
+  /* ========================================
    Image Edit Controls
    ======================================== */
 
-.image-edit-controls {
-  padding: 12px;
-}
+  .image-edit-controls {
+    padding: 12px;
+  }
 
-.edit-section-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--color-border);
-}
+  .edit-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border);
+  }
 
-.filter-buttons-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  flex: 1;
-}
+  .filter-buttons-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+  }
 
-.filter-btn {
-  background: white;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  padding: 6px 12px;
-  font-size: 11px;
-  cursor: pointer;
-  color: var(--color-text-secondary);
-  transition: all 0.15s;
-}
+  .filter-btn {
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 11px;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    transition: all 0.15s;
+  }
 
-.filter-btn:hover {
-  border-color: var(--color-accent);
-}
+  .filter-btn:hover {
+    border-color: var(--color-accent);
+  }
 
-.filter-btn.filter-btn--active {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: white;
-}
+  .filter-btn.filter-btn--active {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+  }
 
-.position-inputs {
-  display: flex;
-  gap: 12px;
-  padding: 0 12px 12px;
-}
+  .position-inputs {
+    display: flex;
+    gap: 12px;
+    padding: 8px 12px 12px;
+  }
 
-.pos-input {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex: 1;
-}
+  .pos-input {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+  }
 
-.pos-input label {
-  font-size: 11px;
-  color: var(--color-text-muted);
-}
+  .pos-input label {
+    font-size: 11px;
+    color: var(--color-text-muted);
+  }
 
-.pos-input input {
-  width: 70px;
-  padding: 6px 8px;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  font-size: 12px;
-}
+  .pos-input input {
+    width: 70px;
+    padding: 8px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 12px;
+  }
 
 .pos-input input:focus {
   outline: none;
   border-color: var(--color-accent);
 }
 
-.action-btn {
-  width: calc(100% - 24px);
-  margin: 0 12px 8px;
-  padding: 10px 16px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.action-btn--primary {
-  background: var(--color-accent);
-  color: white;
+.panel-content.text-editor-panel .action-btn--danger,
+.panel-content.shape-editor-panel .action-btn--danger {
+  color: #dc3545;
+  background: white;
   border: none;
-}
-
-.action-btn--primary:hover {
-  background: var(--color-accent-hover);
-}
-
-.action-btn--primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.action-btn--danger {
-  background: white;
-  color: var(--color-error);
-  border: 1px solid var(--color-error);
-}
-
-.action-btn--danger:hover {
-  background: rgba(231, 76, 60, 0.1);
-}
-
-.font-select {
-  flex: 1;
-  padding: 6px 10px;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  font-size: 12px;
-  background: white;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(100% - 24px);
+  margin-left: auto;
+  margin-right: auto;
   cursor: pointer;
+  transition: text-shadow 0.2s ease;
 }
 
-.font-select:focus {
-  outline: none;
-  border-color: var(--color-accent);
+.panel-content.text-editor-panel .action-btn--danger:hover,
+.panel-content.shape-editor-panel .action-btn--danger:hover {
+  text-shadow: 0 0 8px rgba(220, 53, 69, 0.5);
 }
 
-.no-selection {
-  padding: 24px 16px;
-  text-align: center;
-  color: var(--color-text-muted);
-  font-size: 13px;
-}
+.action-btn {
+    width: calc(100% - 24px);
+    margin: 0 12px 8px;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .action-btn--primary {
+    background: var(--color-accent);
+    color: white;
+    border: none;
+  }
+
+  .action-btn--primary:hover {
+    background: var(--color-accent-hover);
+  }
+
+  .action-btn--primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .action-btn--danger {
+    background: white;
+    color: var(--color-error);
+    border: 1px solid var(--color-error);
+  }
+
+  .action-btn--danger:hover {
+    opacity: 0.8;
+  }
+
+  .font-select {
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 12px;
+    background: white;
+    cursor: pointer;
+  }
+
+  .font-select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+  }
+
+  .no-selection {
+    padding: 24px 16px;
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 13px;
+  }
 }

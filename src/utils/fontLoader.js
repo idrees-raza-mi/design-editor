@@ -1,7 +1,8 @@
 export const FONT_LIST = [
   'Playfair Display', 'Great Vibes', 'Montserrat', 'Bebas Neue', 'Pacifico',
   'Dancing Script', 'Oswald', 'Lobster', 'Raleway', 'Cinzel',
-  'Sacramento', 'Abril Fatface', 'Josefin Sans', 'Satisfy', 'Righteous'
+  'Sacramento', 'Abril Fatface', 'Josefin Sans', 'Satisfy', 'Righteous',
+  'Kaushan Script', 'Permanent Marker', 'Rock Salt', 'Pinyon Script', 'Allura'
 ]
 
 const loadedFonts = new Set()

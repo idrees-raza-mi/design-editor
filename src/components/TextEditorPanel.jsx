@@ -8,10 +8,14 @@ const SIMPLE_FONTS = [
   'Verdana',
   'Trebuchet MS',
   'Courier New',
-  'Comic Sans MS'
-]
-
-const GRAPHIC_FONTS = [
+  'Comic Sans MS',
+  'Tahoma',
+  'Palatino Linotype',
+  'Garamond',
+  'Bookman',
+  'Candara',
+  'Segoe UI',
+  'Calibri',
   'Pacifico',
   'Dancing Script',
   'Great Vibes',
@@ -19,8 +23,22 @@ const GRAPHIC_FONTS = [
   'Kaushan Script',
   'Permanent Marker',
   'Rock Salt',
-  'Abril Fatface'
+  'Abril Fatface',
+  'Bebas Neue',
+  'Oswald',
+  'Montserrat',
+  'Raleway',
+  'Lobster',
+  'Pinyon Script',
+  'Allura',
+  'Sacramento',
+  'Playfair Display',
+  'Cinzel',
+  'Josefin Sans',
+  'Righteous'
 ]
+
+const GRAPHIC_FONTS = []
 
 export default function TextEditorPanel({ canvas, selectedObject, isTextSelected, onBack, saveState, onDelete }) {
   const [text, setText] = useState('')
@@ -118,8 +136,6 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
     saveState?.(canvas)
   }
 
-  const fonts = fontTab === 'simple' ? SIMPLE_FONTS : GRAPHIC_FONTS
-
   const showEditor = isTextSelected && selectedObject
 
   return (
@@ -164,21 +180,27 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
                 onClick={() => handleAlignChange('left')}
                 title="Align Left"
               >
-                ≡
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/>
+                </svg>
               </button>
               <button
                 className={`style-icon ${textAlign === 'center' ? 'active' : ''}`}
                 onClick={() => handleAlignChange('center')}
                 title="Align Center"
               >
-                ≡
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+                </svg>
               </button>
               <button
                 className={`style-icon ${textAlign === 'right' ? 'active' : ''}`}
                 onClick={() => handleAlignChange('right')}
                 title="Align Right"
               >
-                ≡
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/>
+                </svg>
               </button>
             </div>
           </div>
@@ -204,12 +226,16 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
               className="font-select"
               value={fontFamily}
               onChange={(e) => handleFontFamilyChange(e.target.value)}
+              disabled={fontTab === 'graphic'}
             >
-              {fonts.map((f) => (
+              {fontTab === 'simple' && SIMPLE_FONTS.map((f) => (
                 <option key={f} value={f} style={{ fontFamily: f }}>
                   {f}
                 </option>
               ))}
+              {fontTab === 'graphic' && (
+                <option value="">No fonts available</option>
+              )}
             </select>
           </div>
 
