@@ -9,7 +9,6 @@ import SuccessOverlay from './SuccessOverlay'
 import { getConfig } from '../config/editorConfig'
 import { saveDesign, SAVE_STEPS_CONFIG } from '../utils/shopifyDesign'
 import { addToCart } from '../hooks/useShopifyCart'
-import { getPrintSizeLabel } from '../utils/exportDesign'
 
 export default function CustomCanvasEditor({ design, variantId, productTitle }) {
   const [canvas, setCanvas] = useState(null)
@@ -22,8 +21,9 @@ export default function CustomCanvasEditor({ design, variantId, productTitle }) 
   const [successVisible, setSuccessVisible] = useState(false)
   const [savedThumbnailUrl, setSavedThumbnailUrl] = useState('')
   const [leftPanelView, setLeftPanelView] = useState('menu')
-  const [selectedText, setSelectedText] = useState(null)
-  const [activeTab, setActiveTab] = useState('create')
+  const [activeTab, setActiveTab] = useState('activeTab')
+  const [selectedObject, setSelectedObject] = useState(null)
+  const [zoomLevel, setZoomLevel] = useState(100)
   const undoRef = useRef(null)
   const saveFnRef = useRef(null)
 
@@ -32,25 +32,6 @@ export default function CustomCanvasEditor({ design, variantId, productTitle }) 
     saveFnRef.current = saveState
     setCanvas(fc)
     window.__fabricCanvas = fc
-
-    // Listen for selection events
-    fc.on('selection:created', handleSelectionChange)
-    fc.on('selection:updated', handleSelectionChange)
-    fc.on('selection:cleared', handleSelectionCleared)
-  }
-
-  function handleSelectionChange(e) {
-    const selected = e.selected?.[0]
-    if (selected?.type === 'i-text') {
-      setSelectedText(selected)
-      setLeftPanelView('text')
-    } else if (selected?.type === 'image') {
-      setLeftPanelView('upload')
-    }
-  }
-
-  function handleSelectionCleared() {
-    setSelectedText(null)
   }
 
   function handleUndoStateChange(u, r) {
@@ -81,12 +62,41 @@ export default function CustomCanvasEditor({ design, variantId, productTitle }) 
         canvas.setActiveObject(text)
         canvas.renderAll()
         saveFnRef.current?.(canvas)
-        setSelectedText(text)
       }
       setLeftPanelView('text')
     } else if (tool === 'upload') {
       setLeftPanelView('upload')
     }
+  }
+
+  function handleZoom(delta) {
+    if (!canvas) return
+    if (delta === 0) {
+      setZoomLevel(100)
+      canvas.setZoom(1)
+      canvas.renderAll()
+      return
+    }
+    const newZoom = Math.max(25, Math.min(200, zoomLevel + delta))
+    setZoomLevel(newZoom)
+    const zoom = newZoom / 100
+    canvas.setZoom(zoom)
+    canvas.renderAll()
+  }
+
+  function handleSave() {
+    saveFnRef.current?.(canvas)
+  }
+
+  function handleResetCanvas() {
+    if (!canvas) return
+    canvas.clear()
+    canvas.backgroundColor = design.backgroundColor || '#ffffff'
+    canvas.renderAll()
+    setZoomLevel(100)
+    canvas.setZoom(1)
+    saveFnRef.current?.(canvas)
+    setLeftPanelView('menu')
   }
 
   async function handleProcess() {
@@ -143,8 +153,9 @@ export default function CustomCanvasEditor({ design, variantId, productTitle }) 
         canUndo={canUndo}
         onUndo={handleUndo}
         selectedObject={hasSelectedObject}
-        onSave={() => {}}
-        onZoom={() => {}}
+        onSave={handleSave}
+        onZoom={handleZoom}
+        zoomLevel={zoomLevel}
         onEditMenu={() => {}}
       />
 
@@ -154,7 +165,6 @@ export default function CustomCanvasEditor({ design, variantId, productTitle }) 
           onViewChange={handleLeftPanelViewChange}
           canvas={canvas}
           saveState={(c) => saveFnRef.current?.(c)}
-          selectedText={selectedText}
         />
 
         <main className="canvas-area">
@@ -178,6 +188,9 @@ export default function CustomCanvasEditor({ design, variantId, productTitle }) 
                 ↩
               </button>
             )}
+            <button className="reset-canvas-button" onClick={handleResetCanvas} title="Reset Canvas">
+              ↺
+            </button>
           </div>
         </main>
       </div>

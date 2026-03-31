@@ -158,6 +158,13 @@ html, body, #design-editor {
   color: var(--color-border);
 }
 
+.zoom-level {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  min-width: 40px;
+  text-align: center;
+}
+
 /* ========================================
    Editor Main Area
    ======================================== */
@@ -249,6 +256,65 @@ html, body, #design-editor {
 .tool-card-subtitle {
   font-size: 12px;
   color: var(--color-text-muted);
+}
+
+.tool-card--shapes {
+  position: relative;
+}
+
+.tool-card-arrow {
+  position: absolute;
+  right: 12px;
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+.shapes-dropdown {
+  padding: 8px 12px;
+  background: #f9f9f9;
+  border-top: 1px solid var(--color-border);
+  animation: slideDown 0.15s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.shape-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin: 2px 0;
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.shape-option:hover {
+  border-color: var(--color-accent);
+  background: #fafafa;
+}
+
+.shape-option-icon {
+  font-size: 18px;
+  color: var(--color-text-secondary);
+  width: 24px;
+  text-align: center;
+}
+
+.shape-option-label {
+  font-size: 13px;
+  color: var(--color-text-primary);
 }
 
 /* ========================================
@@ -384,6 +450,196 @@ html, body, #design-editor {
 
 .recent-thumbnail:hover {
   opacity: 0.8;
+}
+
+/* ========================================
+   Image Edit View
+   ======================================== */
+
+.image-edit-view {
+  padding: 12px;
+}
+
+.edit-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.back-btn:hover {
+  background: #f0f0f0;
+}
+
+.edit-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.opacity-section {
+  margin-bottom: 16px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.section-label {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.section-value {
+  font-size: 12px;
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.slider-container {
+  padding: 0 4px;
+}
+
+.custom-slider {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 4px;
+  background: #e0e0e0;
+  border-radius: 2px;
+  outline: none;
+}
+
+.custom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--color-accent);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.filters-section {
+  margin-bottom: 16px;
+}
+
+.filter-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-pill {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.filter-pill:hover {
+  border-color: var(--color-accent);
+}
+
+.filter-pill--active {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+
+.remove-bg-btn {
+  width: 100%;
+  padding: 10px;
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  margin-bottom: 12px;
+  transition: all 0.15s;
+}
+
+.remove-bg-btn:hover {
+  background: #f9f9f9;
+  border-color: var(--color-accent);
+}
+
+.remove-bg-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.delete-link {
+  width: 100%;
+  padding: 10px;
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: var(--color-error);
+  cursor: pointer;
+  text-align: center;
+  transition: opacity 0.15s;
+}
+
+.delete-link:hover {
+  opacity: 0.8;
+}
+
+.image-size-section {
+  padding: 12px;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 8px;
+}
+
+.image-size-info {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
+.low-res-warning {
+  font-size: 11px;
+  color: #f39c12;
+  margin-top: 8px;
+  padding: 6px 8px;
+  background: #fff8e1;
+  border-radius: 4px;
+}
+
+/* ========================================
+   Shape Editor Panel
+   ======================================== */
+
+.shape-edit-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 12px;
+}
+
+.shape-editor-panel .control-row {
+  padding: 10px 12px;
 }
 
 /* ========================================
@@ -674,6 +930,28 @@ html, body, #design-editor {
 }
 
 .undo-button:hover {
+  background: #f5f5f5;
+}
+
+.reset-canvas-button {
+  position: absolute;
+  top: 8px;
+  left: 48px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: background 0.15s;
+}
+
+.reset-canvas-button:hover {
   background: #f5f5f5;
 }
 
@@ -1046,8 +1324,142 @@ html, body, #design-editor {
     padding: 0;
   }
 
-  .canvas-wrapper {
-    box-shadow: none;
-    border: 1px solid #ccc;
-  }
+.canvas-wrapper {
+  box-shadow: none;
+  border: 1px solid #ccc;
+}
+
+/* ========================================
+   Image Edit Controls
+   ======================================== */
+
+.image-edit-controls {
+  padding: 12px;
+}
+
+.edit-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.filter-buttons-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex: 1;
+}
+
+.filter-btn {
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: all 0.15s;
+}
+
+.filter-btn:hover {
+  border-color: var(--color-accent);
+}
+
+.filter-btn.filter-btn--active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: white;
+}
+
+.position-inputs {
+  display: flex;
+  gap: 12px;
+  padding: 0 12px 12px;
+}
+
+.pos-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.pos-input label {
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+
+.pos-input input {
+  width: 70px;
+  padding: 6px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.pos-input input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.action-btn {
+  width: calc(100% - 24px);
+  margin: 0 12px 8px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.action-btn--primary {
+  background: var(--color-accent);
+  color: white;
+  border: none;
+}
+
+.action-btn--primary:hover {
+  background: var(--color-accent-hover);
+}
+
+.action-btn--primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.action-btn--danger {
+  background: white;
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+}
+
+.action-btn--danger:hover {
+  background: rgba(231, 76, 60, 0.1);
+}
+
+.font-select {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 12px;
+  background: white;
+  cursor: pointer;
+}
+
+.font-select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.no-selection {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
 }
