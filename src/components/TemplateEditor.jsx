@@ -225,7 +225,7 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
             {canvas && (
               <DimensionOverlay 
                 canvasWidth={canvasWidth} 
-                canvasHeight={canvasHeight} 
+                canvasHeight={canvasHeight}
               />
             )}
             {tooltipVisible && (

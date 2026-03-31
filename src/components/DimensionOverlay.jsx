@@ -1,7 +1,6 @@
 export default function DimensionOverlay({ canvasWidth = 500, canvasHeight = 600 }) {
-  // Convert pixels to cm (assuming 96 DPI)
-  const widthCm = ((canvasWidth * 2.54) / 96).toFixed(2)
-  const heightCm = ((canvasHeight * 2.54) / 96).toFixed(2)
+  const widthCm = ((canvasWidth * 2.54) / 96).toFixed(1)
+  const heightCm = ((canvasHeight * 2.54) / 96).toFixed(1)
 
   return (
     <div className="dimension-overlay">

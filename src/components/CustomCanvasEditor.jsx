@@ -232,7 +232,7 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
             {canvas && (
               <DimensionOverlay 
                 canvasWidth={canvasWidth} 
-                canvasHeight={canvasHeight} 
+                canvasHeight={canvasHeight}
               />
             )}
             <button className="canvas-reset-btn" onClick={handleResetCanvas} title="Reset Canvas">
