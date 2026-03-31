@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.0",
+    "google-font-downloader": "^1.0.6",
     "vite": "^5.0.0"
   }
 }

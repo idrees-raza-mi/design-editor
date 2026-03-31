@@ -1,33 +1,29 @@
 import opentype from 'opentype.js'
 import Warp from 'warpjs'
 
-const FONT_FILE_MAP = {
-  'Playfair Display':  '/fonts/PlayfairDisplay-Regular.woff2',
-  'Great Vibes':       '/fonts/GreatVibes-Regular.woff2',
-  'Montserrat':        '/fonts/Montserrat-Regular.woff2',
-  'Bebas Neue':        '/fonts/BebasNeue-Regular.woff2',
-  'Pacifico':          '/fonts/Pacifico-Regular.woff2',
-  'Dancing Script':    '/fonts/DancingScript-Regular.woff2',
-  'Oswald':            '/fonts/Oswald-Regular.woff2',
-  'Lobster':           '/fonts/Lobster-Regular.woff2',
-  'Raleway':           '/fonts/Raleway-Regular.woff2',
-  'Cinzel':            '/fonts/Cinzel-Regular.woff2',
-  'Sacramento':        '/fonts/Sacramento-Regular.woff2',
-  'Abril Fatface':     '/fonts/AbrilFatface-Regular.woff2',
-  'Josefin Sans':      '/fonts/JosefinSans-Regular.woff2',
-  'Satisfy':           '/fonts/Satisfy-Regular.woff2',
-  'Righteous':         '/fonts/Righteous-Regular.woff2',
+const fontUrlMap = {
+  'Playfair Display': new URL('../fonts/playfairdisplay/font.woff2', import.meta.url),
+  'Great Vibes': new URL('../fonts/greatvibes/font.woff2', import.meta.url),
+  'Montserrat': new URL('../fonts/montserrat/font.woff2', import.meta.url),
+  'Bebas Neue': new URL('../fonts/bebasneue/font.woff2', import.meta.url),
+  'Pacifico': new URL('../fonts/pacifico/font.woff2', import.meta.url),
+  'Dancing Script': new URL('../fonts/dancingscript/font.woff2', import.meta.url),
+  'Oswald': new URL('../fonts/oswald/font.woff2', import.meta.url),
+  'Lobster': new URL('../fonts/lobster/font.woff2', import.meta.url),
+  'Raleway': new URL('../fonts/raleway/font.woff2', import.meta.url),
+  'Cinzel': new URL('../fonts/cinzel/font.woff2', import.meta.url),
+  'Sacramento': new URL('../fonts/sacramento/font.woff2', import.meta.url),
+  'Abril Fatface': new URL('../fonts/abrilfatface/font.woff2', import.meta.url),
+  'Josefin Sans': new URL('../fonts/josefinsans/font.woff2', import.meta.url),
+  'Satisfy': new URL('../fonts/satisfy/font.woff2', import.meta.url),
+  'Righteous': new URL('../fonts/righteous/font.woff2', import.meta.url),
 }
 
 const _opentypeFontCache = new Map()
 
-export async function loadOpentypeFont(fontPath) {
-  if (_opentypeFontCache.has(fontPath)) {
-    return _opentypeFontCache.get(fontPath)
-  }
-  const font = await opentype.load(fontPath)
-  _opentypeFontCache.set(fontPath, font)
-  return font
+export async function resolveFontPath(fontFamily) {
+  const url = fontUrlMap[fontFamily] || fontUrlMap['Montserrat']
+  return url.href
 }
 
 const WARP_PRESETS = [
@@ -273,14 +269,19 @@ export async function applyWarpToText(
     throw new Error('Please add some text before applying effects.')
   }
 
-  const fontPath = FONT_FILE_MAP[source.fontFamily]
-    || FONT_FILE_MAP['Montserrat']
+  const fontPath = await resolveFontPath(source.fontFamily)
   
-  let opentypeFont
-  try {
-    opentypeFont = await loadOpentypeFont(fontPath)
-  } catch (err) {
-    throw new Error('Could not load font. Try selecting a different font first.')
+  if (_opentypeFontCache.has(fontPath)) {
+    opentypeFont = _opentypeFontCache.get(fontPath)
+  } else {
+    try {
+      const response = await fetch(fontPath)
+      const arrayBuffer = await response.arrayBuffer()
+      opentypeFont = opentype.parse(arrayBuffer)
+      _opentypeFontCache.set(fontPath, opentypeFont)
+    } catch (err) {
+      throw new Error('Could not load font. Try selecting a different font first.')
+    }
   }
 
   const opPath = opentypeFont.getPath(
@@ -345,4 +346,4 @@ export async function applyWarpToText(
   saveState(canvas)
 }
 
-export { WARP_PRESETS, FONT_FILE_MAP }
+export { WARP_PRESETS }
