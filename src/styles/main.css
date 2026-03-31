@@ -1722,3 +1722,38 @@ body,
     font-size: 13px;
   }
 }
+
+.text-effects-section {
+  padding: 12px;
+  border-top: 1px solid var(--color-border);
+}
+
+.text-effects-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+}
+
+.text-effects-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.text-effect-btn {
+  padding: 8px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: white;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.text-effect-btn:hover {
+  border-color: var(--color-accent);
+  background: var(--color-bg-hover);
+}

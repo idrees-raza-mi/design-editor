@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { TEXT_EFFECT_PRESETS, applyTextEffect } from '../utils/textEffects'
+import { loadFont } from '../utils/fontLoader'
 
 const SIMPLE_FONTS = [
   'Arial',
@@ -15,30 +17,29 @@ const SIMPLE_FONTS = [
   'Bookman',
   'Candara',
   'Segoe UI',
-  'Calibri',
-  'Pacifico',
-  'Dancing Script',
-  'Great Vibes',
-  'Satisfy',
-  'Kaushan Script',
-  'Permanent Marker',
-  'Rock Salt',
-  'Abril Fatface',
-  'Bebas Neue',
-  'Oswald',
-  'Montserrat',
-  'Raleway',
-  'Lobster',
-  'Pinyon Script',
-  'Allura',
-  'Sacramento',
-  'Playfair Display',
-  'Cinzel',
-  'Josefin Sans',
-  'Righteous'
+  'Calibri'
 ]
 
-const GRAPHIC_FONTS = []
+const GRAPHIC_FONTS = [
+  'Fredoka One',
+  'Pacifico',
+  'Boogaloo',
+  'Titan One',
+  'Lilita One',
+  'Righteous',
+  'Baloo 2',
+  'Permanent Marker',
+  'Comic Neue',
+  'Chewy',
+  'Luckiest Guy',
+  'Bangers',
+  'Kaushan Script',
+  'Lobster',
+  'Sacramento',
+  'Pinyon Script',
+  'Dancing Script',
+  'Great Vibes'
+]
 
 export default function TextEditorPanel({ canvas, selectedObject, isTextSelected, onBack, saveState, onDelete }) {
   const [text, setText] = useState('')
@@ -52,6 +53,10 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
   const [underline, setUnderline] = useState(false)
   const [posX, setPosX] = useState(0)
   const [posY, setPosY] = useState(0)
+
+  useEffect(() => {
+    GRAPHIC_FONTS.forEach((font) => loadFont(font))
+  }, [])
 
   useEffect(() => {
     if (selectedObject && isTextSelected) {
@@ -135,6 +140,15 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
     canvas.renderAll()
     saveState?.(canvas)
   }
+
+  function handleTextEffectSelect(preset) {
+    if (selectedObject && canvas) {
+      applyTextEffect(selectedObject, preset, canvas)
+      saveState?.(canvas)
+    }
+  }
+
+  const fonts = fontTab === 'simple' ? SIMPLE_FONTS : GRAPHIC_FONTS
 
   const showEditor = isTextSelected && selectedObject
 
@@ -228,16 +242,30 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
               onChange={(e) => handleFontFamilyChange(e.target.value)}
               disabled={fontTab === 'graphic'}
             >
-              {fontTab === 'simple' && SIMPLE_FONTS.map((f) => (
+              {fonts.map((f) => (
                 <option key={f} value={f} style={{ fontFamily: f }}>
                   {f}
                 </option>
               ))}
-              {fontTab === 'graphic' && (
-                <option value="">No fonts available</option>
-              )}
             </select>
           </div>
+
+          {fontTab === 'graphic' && (
+            <div className="text-effects-section">
+              <div className="text-effects-label">Text Effects</div>
+              <div className="text-effects-row">
+                {TEXT_EFFECT_PRESETS.map((preset) => (
+                  <button
+                    key={preset.id}
+                    className="text-effect-btn"
+                    onClick={() => handleTextEffectSelect(preset)}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="control-row slider-row">
             <span className="control-label">Font size</span>
