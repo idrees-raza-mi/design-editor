@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { TEXT_EFFECT_PRESETS, applyTextEffect } from '../utils/textEffects'
 import { loadFont } from '../utils/fontLoader'
 import TextEffectPicker from './TextEffectPicker'
+import WarpEffectsPanel from './WarpEffectsPanel'
+import { WARP_PRESETS } from '../utils/textWarp'
 
 const SIMPLE_FONTS = [
   'Arial',
@@ -126,6 +128,7 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
   const [underline, setUnderline] = useState(false)
   const [posX, setPosX] = useState(0)
   const [posY, setPosY] = useState(0)
+  const [showWarpPanel, setShowWarpPanel] = useState(false)
 
   useEffect(() => {
     GRAPHIC_FONTS.forEach((font) => loadFont(font))
@@ -227,12 +230,48 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
 
   return (
     <div className="panel-content text-editor-panel">
-      {!showEditor ? (
+      {showWarpPanel ? (
+        <WarpEffectsPanel
+          canvas={canvas}
+          selectedObject={selectedObject}
+          saveState={saveState}
+          onClose={() => setShowWarpPanel(false)}
+        />
+      ) : !showEditor ? (
         <div className="no-selection">
           <p>Select a text object on the canvas to edit</p>
         </div>
       ) : (
         <>
+          {selectedObject?._isWarpedText && (
+            <div className="warp-edit-banner">
+              <span>✏ Text is warped</span>
+              <button onClick={() => {
+                const obj = canvas.getActiveObject()
+                if (obj?._warpSource) {
+                  const src = obj._warpSource
+                  const restored = new fabric.IText(src.text, {
+                    left: src.left,
+                    top: src.top,
+                    fontFamily: src.fontFamily,
+                    fontSize: src.fontSize,
+                    fill: src.fill,
+                    fontWeight: src.fontWeight || 'normal',
+                    fontStyle: src.fontStyle || 'normal',
+                    originX: 'center',
+                    originY: 'center',
+                  })
+                  canvas.remove(obj)
+                  canvas.add(restored)
+                  canvas.setActiveObject(restored)
+                  canvas.renderAll()
+                  saveState(canvas)
+                }
+              }}>
+                Edit Original Text
+              </button>
+            </div>
+          )}
           <div className="text-input-section">
             <textarea
               className="text-input"
@@ -367,6 +406,22 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
               />
               <span className="color-value">{fillColor}</span>
             </div>
+          </div>
+
+          <div
+            className="control-row clickable"
+            onClick={() => setShowWarpPanel(true)}
+          >
+            <span className="control-label">Effects</span>
+            <span className="control-value">
+              {
+                canvas?.getActiveObject()?._warpSource?.warpId
+                  ? WARP_PRESETS.find(
+                      p => p.id === canvas.getActiveObject()._warpSource.warpId
+                    )?.label
+                  : 'Plain Text'
+              }
+            </span>
           </div>
 
           <div className="control-row">

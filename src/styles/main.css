@@ -868,6 +868,16 @@ body,
   border-bottom: 1px solid #f0f0f0;
 }
 
+.control-row.clickable {
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.control-row.clickable:hover {
+  background: rgba(0, 0, 0, 0.03);
+  opacity: 0.85;
+}
+
 .control-label {
   font-size: 12px;
   color: var(--color-text-secondary);
@@ -2034,4 +2044,163 @@ body,
 .font-select option {
   padding: 6px 8px;
   font-size: 12px;
+}
+
+/* Warp Panel */
+.warp-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.warp-effect-size-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+.warp-effect-size-row label {
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.warp-effect-size-row input[type=range] {
+  flex: 1;
+  accent-color: #8B7355;
+  height: 4px;
+}
+
+.warp-effect-size-row .value {
+  font-size: 13px;
+  color: #333;
+  min-width: 24px;
+  text-align: right;
+  font-weight: 500;
+}
+
+.warp-apply-status {
+  font-size: 11px;
+  color: #888;
+  padding: 0 14px 6px;
+  flex-shrink: 0;
+  min-height: 18px;
+}
+
+.warp-apply-status.error {
+  color: #e74c3c;
+}
+
+.warp-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding: 10px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.warp-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 4px;
+  cursor: pointer;
+  background: white;
+  aspect-ratio: 1.3;
+  transition: border-color 0.15s ease;
+  overflow: hidden;
+}
+
+.warp-card:hover {
+  border-color: #aaa;
+}
+
+.warp-card.active {
+  border: 2px solid #8B7355;
+  background: #fdf8f2;
+}
+
+@keyframes warpPulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.7; }
+}
+
+.warp-preview-loading {
+  width: 100%;
+  height: 100%;
+  min-height: 46px;
+  background: #e8e8e8;
+  border-radius: 4px;
+  animation: warpPulse 1.2s ease infinite;
+}
+
+.warp-panel-buttons {
+  display: flex;
+  border-top: 1px solid #e0e0e0;
+  flex-shrink: 0;
+}
+
+.warp-btn-cancel {
+  flex: 1;
+  height: 44px;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.warp-btn-cancel:hover {
+  background: #333;
+}
+
+.warp-btn-done {
+  flex: 1;
+  height: 44px;
+  background: #8B7355;
+  color: white;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.warp-btn-done:hover {
+  background: #7a6248;
+}
+
+.warp-edit-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff8e1;
+  border-bottom: 1px solid #ffe082;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #7a5c00;
+  flex-shrink: 0;
+}
+
+.warp-edit-banner button {
+  font-size: 12px;
+  color: #8B7355;
+  background: none;
+  border: 1px solid #8B7355;
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+
+.warp-edit-banner button:hover {
+  background: #fdf8f2;
 }

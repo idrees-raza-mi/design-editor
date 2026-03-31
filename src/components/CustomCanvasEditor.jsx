@@ -25,6 +25,7 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
   const [selectedObject, setSelectedObject] = useState(null)
   const [zoomLevel, setZoomLevel] = useState(100)
   const [selectedSize, setSelectedSize] = useState(null)
+  const [previousView, setPreviousView] = useState(null)
   const undoRef = useRef(null)
   const saveFnRef = useRef(null)
 
@@ -56,7 +57,19 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
   }
 
   function handleLeftPanelViewChange(view) {
+    if (leftPanelView !== 'menu' && view === 'menu') {
+      setPreviousView(leftPanelView)
+    }
     setLeftPanelView(view)
+  }
+
+  function handleBack() {
+    if (previousView) {
+      setLeftPanelView(previousView)
+      setPreviousView(null)
+    } else {
+      setLeftPanelView('menu')
+    }
   }
 
   function handleToolSelect(tool) {
@@ -161,7 +174,7 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
         activeTab={activeTab}
         onTabChange={setActiveTab}
         showBackButton={leftPanelView !== 'menu'}
-        onBack={() => setLeftPanelView('menu')}
+        onBack={handleBack}
         canUndo={canUndo}
         onUndo={handleUndo}
         canRedo={canRedo}
