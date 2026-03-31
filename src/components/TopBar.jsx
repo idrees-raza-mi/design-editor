@@ -13,13 +13,9 @@ export default function TopBar({
   onZoom,
   onEditMenu,
   selectedObject,
-  zoomLevel = 100
+  zoomLevel = 100,
+  editorTitle = 'Design Editor'
 }) {
-  const tabs = [
-    { id: 'create', label: 'Create Your...' },
-    { id: 'product', label: 'Change product' },
-    { id: 'printing', label: 'Printing' }
-  ]
 
   return (
     <header className="topbar">
@@ -33,15 +29,7 @@ export default function TopBar({
       </div>
 
       <div className="topbar-center">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            className={`tab-button ${activeTab === tab.id ? 'tab-active' : ''}`}
-            onClick={() => onTabChange?.(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
+        <span className="editor-title">{editorTitle}</span>
       </div>
 
       <div className="topbar-right">

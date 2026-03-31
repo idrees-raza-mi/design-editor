@@ -4,6 +4,8 @@ export default function ShapeEditorPanel({ canvas, selectedObject, isShapeSelect
   const [fillColor, setFillColor] = useState('#cccccc')
   const [strokeColor, setStrokeColor] = useState('#888888')
   const [strokeWidth, setStrokeWidth] = useState(2)
+  const [opacity, setOpacity] = useState(100)
+  const [isHollow, setIsHollow] = useState(false)
   const [posX, setPosX] = useState(0)
   const [posY, setPosY] = useState(0)
 
@@ -12,6 +14,8 @@ export default function ShapeEditorPanel({ canvas, selectedObject, isShapeSelect
       setFillColor(selectedObject.fill || '#cccccc')
       setStrokeColor(selectedObject.stroke || '#888888')
       setStrokeWidth(selectedObject.strokeWidth || 2)
+      setOpacity(Math.round((selectedObject.opacity ?? 1) * 100))
+      setIsHollow(selectedObject.fill === 'transparent' || selectedObject.fill === null)
       setPosX(Math.round(selectedObject.left || 0))
       setPosY(Math.round(selectedObject.top || 0))
     }
@@ -24,9 +28,9 @@ export default function ShapeEditorPanel({ canvas, selectedObject, isShapeSelect
     saveState?.(canvas)
   }
 
-  function handleFillChange(color) {
+  function handleFillColorChange(color) {
     setFillColor(color)
-    updateShape({ fill: color })
+    updateShape({ fill: isHollow ? 'transparent' : color })
   }
 
   function handleStrokeChange(color) {
@@ -37,6 +41,21 @@ export default function ShapeEditorPanel({ canvas, selectedObject, isShapeSelect
   function handleStrokeWidthChange(width) {
     setStrokeWidth(width)
     updateShape({ strokeWidth: width })
+  }
+
+  function handleOpacityChange(val) {
+    setOpacity(val)
+    updateShape({ opacity: val / 100 })
+  }
+
+  function handleHollowToggle() {
+    const newHollow = !isHollow
+    setIsHollow(newHollow)
+    if (newHollow) {
+      updateShape({ fill: 'transparent' })
+    } else {
+      updateShape({ fill: fillColor })
+    }
   }
 
   function handlePosChange(axis, val) {
@@ -70,16 +89,42 @@ export default function ShapeEditorPanel({ canvas, selectedObject, isShapeSelect
           </div>
 
           <div className="control-row">
-            <span className="control-label">Fill Color</span>
-            <div className="color-picker-row">
+            <label className="checkbox-label">
               <input
-                type="color"
-                value={fillColor}
-                onChange={(e) => handleFillChange(e.target.value)}
-                className="color-input"
+                type="checkbox"
+                checked={isHollow}
+                onChange={handleHollowToggle}
               />
-              <span className="color-value">{fillColor}</span>
+              <span>Hollow (No Fill)</span>
+            </label>
+          </div>
+
+          {!isHollow && (
+            <div className="control-row">
+              <span className="control-label">Fill Color</span>
+              <div className="color-picker-row">
+                <input
+                  type="color"
+                  value={fillColor}
+                  onChange={(e) => handleFillColorChange(e.target.value)}
+                  className="color-input"
+                />
+                <span className="color-value">{fillColor}</span>
+              </div>
             </div>
+          )}
+
+          <div className="control-row slider-row">
+            <span className="control-label">Opacity</span>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={opacity}
+              onChange={(e) => handleOpacityChange(parseInt(e.target.value))}
+              className="slider"
+            />
+            <span className="slider-value">{opacity}%</span>
           </div>
 
           <div className="control-row">

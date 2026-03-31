@@ -7,7 +7,14 @@ const MOCK_CANVAS_DESIGN = {
   svgClipPath: null,
   backgroundColor: '#ffffff',
   sizeLabel: '2FT / 60cm',
-  category: 'Bears'
+  category: 'Bears',
+  availableSizes: [
+    { id: '1', label: '1FT / 30cm', price: '£49.99', width: 200, height: 250 },
+    { id: '2', label: '2FT / 60cm', price: '£89.99', width: 400, height: 500 },
+    { id: '3', label: '3FT / 90cm', price: '£129.99', width: 600, height: 750 }
+  ],
+  printProfile: 'High Quality Vinyl',
+  description: 'Premium quality vinyl print on durable board material. Perfect for indoor and outdoor use. Weather resistant and fade-proof.'
 }
 
 const MOCK_TEMPLATE_DESIGN = {
@@ -17,7 +24,14 @@ const MOCK_TEMPLATE_DESIGN = {
   svgClipPath: null,
   templateJSON: null,
   editableFields: ['Name', 'Message', 'Photo'],
-  category: 'Birthday'
+  category: 'Birthday',
+  availableSizes: [
+    { id: '1', label: 'Small', price: '£39.99' },
+    { id: '2', label: 'Medium', price: '£59.99' },
+    { id: '3', label: 'Large', price: '£89.99' }
+  ],
+  printProfile: 'Premium Glossy',
+  description: 'Beautiful birthday arch design with customizable text and photo areas. Perfect for memorable celebrations.'
 }
 
 function fieldsToObject(fields) {
@@ -66,7 +80,10 @@ export async function fetchCanvasDesign(id) {
     svgClipPath: fields.svg_clip_path || null,
     backgroundColor: fields.background_color || '#ffffff',
     sizeLabel: fields.size_label || '',
-    category: fields.category || ''
+    category: fields.category || '',
+    availableSizes: fields.available_sizes ? JSON.parse(fields.available_sizes) : [],
+    printProfile: fields.print_profile || '',
+    description: fields.description || ''
   }
 }
 
@@ -83,6 +100,9 @@ export async function fetchTemplateDesign(id) {
     svgClipPath: fields.svg_clip_path || null,
     templateJSON: fields.template_json ? JSON.parse(fields.template_json) : null,
     editableFields: fields.editable_fields ? JSON.parse(fields.editable_fields) : [],
-    category: fields.category || ''
+    category: fields.category || '',
+    availableSizes: fields.available_sizes ? JSON.parse(fields.available_sizes) : [],
+    printProfile: fields.print_profile || '',
+    description: fields.description || ''
   }
 }

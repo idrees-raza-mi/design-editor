@@ -138,42 +138,42 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
               placeholder="Enter your text..."
             />
             <div className="text-style-icons">
-              <button 
+              <button
                 className={`style-icon ${fontWeight === 'bold' ? 'active' : ''}`}
                 onClick={toggleBold}
                 title="Bold"
               >
                 <strong>B</strong>
               </button>
-              <button 
+              <button
                 className={`style-icon ${fontWeight === 'italic' ? 'active' : ''}`}
                 onClick={toggleItalic}
                 title="Italic"
               >
                 <em>I</em>
               </button>
-              <button 
+              <button
                 className={`style-icon ${underline ? 'active' : ''}`}
                 onClick={toggleUnderline}
                 title="Underline"
               >
                 <span style={{ textDecoration: 'underline' }}>U</span>
               </button>
-              <button 
+              <button
                 className={`style-icon ${textAlign === 'left' ? 'active' : ''}`}
                 onClick={() => handleAlignChange('left')}
                 title="Align Left"
               >
                 ≡
               </button>
-              <button 
+              <button
                 className={`style-icon ${textAlign === 'center' ? 'active' : ''}`}
                 onClick={() => handleAlignChange('center')}
                 title="Align Center"
               >
                 ≡
               </button>
-              <button 
+              <button
                 className={`style-icon ${textAlign === 'right' ? 'active' : ''}`}
                 onClick={() => handleAlignChange('right')}
                 title="Align Right"
@@ -184,13 +184,13 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
           </div>
 
           <div className="font-tabs">
-            <button 
+            <button
               className={`font-tab ${fontTab === 'simple' ? 'active' : ''}`}
               onClick={() => setFontTab('simple')}
             >
               Simple Fonts
             </button>
-            <button 
+            <button
               className={`font-tab ${fontTab === 'graphic' ? 'active' : ''}`}
               onClick={() => setFontTab('graphic')}
             >
@@ -200,7 +200,7 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
 
           <div className="control-row">
             <span className="control-label">Fonts</span>
-            <select 
+            <select
               className="font-select"
               value={fontFamily}
               onChange={(e) => handleFontFamilyChange(e.target.value)}
@@ -274,9 +274,10 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
             </div>
           </div>
 
-          <button 
+          <button
             className="action-btn action-btn--danger"
             onClick={onDelete}
+
           >
             Delete Text
           </button>

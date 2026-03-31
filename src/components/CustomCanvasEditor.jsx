@@ -10,7 +10,7 @@ import { getConfig } from '../config/editorConfig'
 import { saveDesign, SAVE_STEPS_CONFIG } from '../utils/shopifyDesign'
 import { addToCart } from '../hooks/useShopifyCart'
 
-export default function CustomCanvasEditor({ design, variantId, productTitle }) {
+export default function CustomCanvasEditor({ design, variantId, productTitle, editorTitle = 'Design Editor' }) {
   const [canvas, setCanvas] = useState(null)
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
@@ -24,8 +24,13 @@ export default function CustomCanvasEditor({ design, variantId, productTitle }) 
   const [activeTab, setActiveTab] = useState('activeTab')
   const [selectedObject, setSelectedObject] = useState(null)
   const [zoomLevel, setZoomLevel] = useState(100)
+  const [selectedSize, setSelectedSize] = useState(null)
   const undoRef = useRef(null)
   const saveFnRef = useRef(null)
+
+  const currentSize = selectedSize || design.availableSizes?.find(s => s.label === design.sizeLabel) || design.availableSizes?.[0]
+  const canvasWidth = currentSize?.width || design.canvasWidth
+  const canvasHeight = currentSize?.height || design.canvasHeight
 
   function handleCanvasReady({ canvas: fc, undo, redo, saveState }) {
     undoRef.current = () => undo(fc)
@@ -157,6 +162,7 @@ export default function CustomCanvasEditor({ design, variantId, productTitle }) 
         onZoom={handleZoom}
         zoomLevel={zoomLevel}
         onEditMenu={() => {}}
+        editorTitle={editorTitle}
       />
 
       <div className="editor-main">
@@ -170,8 +176,9 @@ export default function CustomCanvasEditor({ design, variantId, productTitle }) 
         <main className="canvas-area">
           <div className="canvas-wrapper">
             <DesignCanvas
-              width={design.canvasWidth}
-              height={design.canvasHeight}
+              key={currentSize?.id || 'default'}
+              width={canvasWidth}
+              height={canvasHeight}
               svgClipPath={design.svgClipPath}
               backgroundColor={design.backgroundColor}
               onCanvasReady={handleCanvasReady}
@@ -179,8 +186,8 @@ export default function CustomCanvasEditor({ design, variantId, productTitle }) 
             />
             {canvas && (
               <DimensionOverlay 
-                canvasWidth={design.canvasWidth} 
-                canvasHeight={design.canvasHeight} 
+                canvasWidth={canvasWidth} 
+                canvasHeight={canvasHeight} 
               />
             )}
             {canUndo && (
@@ -197,9 +204,11 @@ export default function CustomCanvasEditor({ design, variantId, productTitle }) 
 
       <BottomBar
         productName={design.name}
-        price="£89.99"
+        price={selectedSize?.price || design.availableSizes?.[0]?.price || null}
         onProcess={handleProcess}
         saving={saving}
+        design={{...design, sizeLabel: selectedSize?.label || design.sizeLabel}}
+        onSizeChange={setSelectedSize}
       />
 
       <SavingOverlay

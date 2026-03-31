@@ -11,7 +11,7 @@ import { getConfig } from '../config/editorConfig'
 import { saveDesign, SAVE_STEPS_CONFIG } from '../utils/shopifyDesign'
 import { addToCart } from '../hooks/useShopifyCart'
 
-export default function TemplateEditor({ design, variantId, productTitle }) {
+export default function TemplateEditor({ design, variantId, productTitle, editorTitle = 'Template Editor' }) {
   const [canvas, setCanvas] = useState(null)
   const [saving, setSaving] = useState(false)
   const [overlayVisible, setOverlayVisible] = useState(false)
@@ -25,7 +25,12 @@ export default function TemplateEditor({ design, variantId, productTitle }) {
   const [savedThumbnailUrl, setSavedThumbnailUrl] = useState('')
   const [leftPanelView, setLeftPanelView] = useState('menu')
   const [activeTab, setActiveTab] = useState('create')
+  const [selectedSize, setSelectedSize] = useState(null)
   const saveFnRef = useRef(null)
+
+  const currentSize = selectedSize || design.availableSizes?.find(s => s.label === design.sizeLabel) || design.availableSizes?.[0]
+  const canvasWidth = currentSize?.width || design.canvasWidth
+  const canvasHeight = currentSize?.height || design.canvasHeight
 
   async function handleCanvasReady({ canvas: fc, saveState }) {
     setCanvas(fc)
@@ -139,6 +144,7 @@ export default function TemplateEditor({ design, variantId, productTitle }) {
         onTabChange={setActiveTab}
         showBackButton={leftPanelView !== 'menu'}
         onBack={() => setLeftPanelView('menu')}
+        editorTitle={editorTitle}
       />
 
       <div className="editor-main">
@@ -209,16 +215,17 @@ export default function TemplateEditor({ design, variantId, productTitle }) {
         <main className="canvas-area">
           <div className="canvas-wrapper">
             <DesignCanvas
-              width={design.canvasWidth}
-              height={design.canvasHeight}
+              key={currentSize?.id || 'default'}
+              width={canvasWidth}
+              height={canvasHeight}
               svgClipPath={design.svgClipPath}
               backgroundColor="#ffffff"
               onCanvasReady={handleCanvasReady}
             />
             {canvas && (
               <DimensionOverlay 
-                canvasWidth={design.canvasWidth} 
-                canvasHeight={design.canvasHeight} 
+                canvasWidth={canvasWidth} 
+                canvasHeight={canvasHeight} 
               />
             )}
             {tooltipVisible && (
@@ -232,9 +239,11 @@ export default function TemplateEditor({ design, variantId, productTitle }) {
 
       <BottomBar
         productName={design.name}
-        price="£89.99"
+        price={selectedSize?.price || design.availableSizes?.[0]?.price || null}
         onProcess={handleProcess}
         saving={saving}
+        design={{...design, sizeLabel: selectedSize?.label || design.sizeLabel}}
+        onSizeChange={setSelectedSize}
       />
 
       <SavingOverlay

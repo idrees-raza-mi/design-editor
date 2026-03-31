@@ -51,6 +51,7 @@ export default function App() {
         design={design}
         variantId={getConfig().variantId}
         productTitle={getConfig().productTitle}
+        editorTitle="Design Editor"
       />
     )
   }
@@ -61,6 +62,7 @@ export default function App() {
         design={design}
         variantId={getConfig().variantId}
         productTitle={getConfig().productTitle}
+        editorTitle="Template Editor"
       />
     )
   }
