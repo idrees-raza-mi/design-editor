@@ -184,6 +184,29 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
 
         <main className="canvas-area">
           <div className="canvas-wrapper">
+            {canUndo && (
+              <div className="canvas-undo-redo">
+                <button 
+                  className="canvas-undo-btn" 
+                  onClick={handleUndo}
+                  title="Undo (Ctrl+Z)"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>
+                  </svg>
+                </button>
+                <button 
+                  className="canvas-redo-btn" 
+                  onClick={handleRedo}
+                  disabled={!canRedo}
+                  title="Redo (Ctrl+Y)"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/>
+                  </svg>
+                </button>
+              </div>
+            )}
             <DesignCanvas
               key={currentSize?.id || 'default'}
               width={canvasWidth}
@@ -199,8 +222,11 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
                 canvasHeight={canvasHeight} 
               />
             )}
-            <button className="reset-canvas-button" onClick={handleResetCanvas} title="Reset Canvas">
-              ↺
+            <button className="canvas-reset-btn" onClick={handleResetCanvas} title="Reset Canvas">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                <path d="M3 3v5h5"/>
+              </svg>
             </button>
           </div>
         </main>

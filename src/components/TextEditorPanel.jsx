@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { TEXT_EFFECT_PRESETS, applyTextEffect } from '../utils/textEffects'
 import { loadFont } from '../utils/fontLoader'
+import TextEffectPicker from './TextEffectPicker'
 
 const SIMPLE_FONTS = [
   'Arial',
@@ -251,20 +252,11 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
           </div>
 
           {fontTab === 'graphic' && (
-            <div className="text-effects-section">
-              <div className="text-effects-label">Text Effects</div>
-              <div className="text-effects-row">
-                {TEXT_EFFECT_PRESETS.map((preset) => (
-                  <button
-                    key={preset.id}
-                    className="text-effect-btn"
-                    onClick={() => handleTextEffectSelect(preset)}
-                  >
-                    {preset.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <TextEffectPicker
+              selectedObject={selectedObject}
+              canvas={canvas}
+              saveState={saveState}
+            />
           )}
 
           <div className="control-row slider-row">
