@@ -183,7 +183,6 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
         onSave={handleSave}
         onZoom={handleZoom}
         zoomLevel={zoomLevel}
-        onEditMenu={() => {}}
         editorTitle={editorTitle}
       />
 
