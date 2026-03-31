@@ -34,6 +34,7 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
 
   function handleCanvasReady({ canvas: fc, undo, redo, saveState }) {
     undoRef.current = () => undo(fc)
+    fc.redoRef = () => redo(fc)
     saveFnRef.current = saveState
     setCanvas(fc)
     window.__fabricCanvas = fc
@@ -46,6 +47,12 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
 
   function handleUndo() {
     undoRef.current?.()
+  }
+
+  function handleRedo() {
+    if (canvas && canvas.redoRef) {
+      canvas.redoRef()
+    }
   }
 
   function handleLeftPanelViewChange(view) {
@@ -157,6 +164,8 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
         onBack={() => setLeftPanelView('menu')}
         canUndo={canUndo}
         onUndo={handleUndo}
+        canRedo={canRedo}
+        onRedo={handleRedo}
         selectedObject={hasSelectedObject}
         onSave={handleSave}
         onZoom={handleZoom}
@@ -189,11 +198,6 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
                 canvasWidth={canvasWidth} 
                 canvasHeight={canvasHeight} 
               />
-            )}
-            {canUndo && (
-              <button className="undo-button" onClick={handleUndo}>
-                ↩
-              </button>
             )}
             <button className="reset-canvas-button" onClick={handleResetCanvas} title="Reset Canvas">
               ↺
