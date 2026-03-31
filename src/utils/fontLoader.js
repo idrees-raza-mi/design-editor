@@ -1,8 +1,18 @@
 export const FONT_LIST = [
-  'Playfair Display', 'Great Vibes', 'Montserrat', 'Bebas Neue', 'Pacifico',
-  'Dancing Script', 'Oswald', 'Lobster', 'Raleway', 'Cinzel',
-  'Sacramento', 'Abril Fatface', 'Josefin Sans', 'Satisfy', 'Righteous',
-  'Kaushan Script', 'Permanent Marker', 'Rock Salt', 'Pinyon Script', 'Allura'
+  'Fredoka One', 'Pacifico', 'Boogaloo', 'Titan One', 'Lilita One', 'Righteous',
+  'Baloo 2', 'Permanent Marker', 'Comic Neue', 'Chewy', 'Luckiest Guy', 'Bangers',
+  'Kaushan Script', 'Lobster', 'Sacramento', 'Pinyon Script', 'Dancing Script',
+  'Great Vibes', 'Alfa Slab One', 'Bebas Neue', 'Big Shoulders Display', 'Bungee',
+  'Cabin Sketch', 'Chunky', 'Comfortaa', 'Courgette', 'Creepster', 'Devonshire',
+  'Eater', 'Frijole', 'Fugaz One', 'Gloria Hallelujah', 'Gochi Hand', 'Gravitas One',
+  'Homemade Apple', 'Inspiration', 'Jolly Lodger', 'Kelly Slab', 'Lemon Tuesday',
+  'Lobster Two', 'Love Ya Like A Sister', 'Metamorphous', 'Monoton', 'Moulp',
+  'Neucha', 'Niconne', 'Nosifer', 'Passion One', 'Play', 'Pompiere', 'Ranchers',
+  'Raving Rebel', 'Redressed', 'Renner', 'Risque', 'Road Rage', 'Roboto Slab',
+  'Rock Salt', 'Russo One', 'Shadows Into Light', 'Shrikhand', 'Staatliches',
+  'Stint Ultra Expanded', 'Stretch Pro', 'Sunshiney', 'The Girl Next Door', 'Ultra',
+  'UnifrakturMaguntia', 'Vibur', 'Waiting for the Horizon', 'Wallpoet', 'Warnes',
+  'Wellfleet', 'Xarrov', 'Yeseva One', 'Zcool KuaiLe', 'Zilla Slab'
 ]
 
 const loadedFonts = new Set()
@@ -19,7 +29,6 @@ export function loadFont(fontName) {
       resolve()
     }
     link.onerror = () => {
-      // Resolve anyway so callers aren't blocked by network failures
       loadedFonts.add(fontName)
       resolve()
     }
