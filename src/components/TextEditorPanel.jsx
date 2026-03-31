@@ -241,7 +241,6 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
               className="font-select"
               value={fontFamily}
               onChange={(e) => handleFontFamilyChange(e.target.value)}
-              disabled={fontTab === 'graphic'}
             >
               {fonts.map((f) => (
                 <option key={f} value={f} style={{ fontFamily: f }}>
