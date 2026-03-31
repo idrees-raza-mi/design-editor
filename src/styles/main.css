@@ -1594,33 +1594,44 @@ body,
 
 .position-inputs {
   display: flex;
-  gap: 12px;
-  padding: 8px 12px 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  margin: 8px 12px;
 }
 
 .position-inputs .pos-input {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex: 1;
+  justify-content: center;
 }
 
 .position-inputs .pos-input label {
-  font-size: 11px;
-  color: #888;
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  min-width: 20px;
 }
 
 .position-inputs .pos-input input {
-  width: 70px;
+  width: 60px;
   padding: 8px 10px;
   border: 1px solid #e0e0e0;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 12px;
+  text-align: center;
+  background: white;
 }
 
 .position-inputs .pos-input input:focus {
   outline: none;
   border-color: #8B7355;
+  box-shadow: 0 0 0 2px rgba(139, 115, 85, 0.1);
 }
 
 .panel-content.text-editor-panel .action-btn--danger,
