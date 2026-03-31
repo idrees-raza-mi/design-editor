@@ -1,0 +1,2 @@
+export const SHOPIFY_STORE_DOMAIN = import.meta.env.VITE_SHOPIFY_STORE
+export const SHOPIFY_STOREFRONT_TOKEN = import.meta.env.VITE_STOREFRONT_TOKEN
