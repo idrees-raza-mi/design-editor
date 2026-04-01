@@ -156,6 +156,8 @@ export default function ShapeEditorPanel({ canvas, selectedObject, isShapeSelect
 
           <div className="control-row">
             <span className="control-label">Position</span>
+          </div>
+          <div className="position-inputs">
             <div className="pos-input">
               <label>X</label>
               <input
