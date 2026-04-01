@@ -27,6 +27,7 @@ export default defineConfig({
       name: 'copy-fonts',
       closeBundle() {
         copyDirRecursive('public/fonts', 'dist/fonts')
+        copyDirRecursive('public/text-wrapper', 'text-wrapper')
       }
     }
   ],
