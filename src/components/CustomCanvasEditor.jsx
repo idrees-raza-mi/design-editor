@@ -42,14 +42,19 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
     setShowLayers(false)
   }
 
+  function handleZoomChange(zoom) {
+    setZoomLevel(zoom)
+  }
+
   const currentSize = selectedSize || design.availableSizes?.find(s => s.label === design.sizeLabel) || design.availableSizes?.[0]
   const canvasWidth = currentSize?.width || design.canvasWidth
   const canvasHeight = currentSize?.height || design.canvasHeight
 
-  function handleCanvasReady({ canvas: fc, undo, redo, saveState }) {
+  function handleCanvasReady({ canvas: fc, undo, redo, saveState, zoom: currentZoom, handleZoom }) {
     undoRef.current = () => undo(fc)
     fc.redoRef = () => redo(fc)
     saveFnRef.current = saveState
+    fc.handleZoom = handleZoom
     setCanvas(fc)
     window.__fabricCanvas = fc
 
@@ -262,6 +267,38 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
 
         <main className="canvas-area">
           <div className="canvas-wrapper">
+            <DesignCanvas
+              key={currentSize?.id || 'default'}
+              width={canvasWidth}
+              height={canvasHeight}
+              svgClipPath={design.svgClipPath}
+              backgroundColor={design.backgroundColor}
+              onCanvasReady={handleCanvasReady}
+              onUndoStateChange={handleUndoStateChange}
+              onZoomChange={handleZoomChange}
+            />
+            {canvas && (
+              <DimensionOverlay 
+                canvasWidth={canvasWidth} 
+                canvasHeight={canvasHeight}
+              />
+            )}
+            <button className="canvas-reset-btn" onClick={handleResetCanvas} title="Reset Canvas">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                <path d="M3 3v5h5"/>
+              </svg>
+            </button>
+            {canvas && hasSelection && (
+              <button className="canvas-duplicate-btn" onClick={handleDuplicate} title="Duplicate (Ctrl+D)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+              </button>
+            )}
+          </div>
+          <div className="canvas-area-controls">
             <div className="canvas-undo-redo">
               <button 
                 className="canvas-undo-btn" 
@@ -284,35 +321,40 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
                 </svg>
               </button>
             </div>
-            <DesignCanvas
-              key={currentSize?.id || 'default'}
-              width={canvasWidth}
-              height={canvasHeight}
-              svgClipPath={design.svgClipPath}
-              backgroundColor={design.backgroundColor}
-              onCanvasReady={handleCanvasReady}
-              onUndoStateChange={handleUndoStateChange}
-            />
-            {canvas && (
-              <DimensionOverlay 
-                canvasWidth={canvasWidth} 
-                canvasHeight={canvasHeight}
-              />
-            )}
-            <button className="canvas-reset-btn" onClick={handleResetCanvas} title="Reset Canvas">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                <path d="M3 3v5h5"/>
-              </svg>
-            </button>
-            {canvas && hasSelection && (
-              <button className="canvas-duplicate-btn" onClick={handleDuplicate} title="Duplicate (Ctrl+D)">
+            <div className="canvas-zoom-controls">
+              <button 
+                className="canvas-zoom-btn" 
+                onClick={() => canvas?.handleZoom?.(zoomLevel - 10)}
+                disabled={zoomLevel <= 10}
+                title="Zoom Out (Ctrl+-)"
+              >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
               </button>
-            )}
+              <span className="canvas-zoom-level">{zoomLevel}%</span>
+              <button 
+                className="canvas-zoom-btn" 
+                onClick={() => canvas?.handleZoom?.(zoomLevel + 10)}
+                disabled={zoomLevel >= 500}
+                title="Zoom In (Ctrl++)"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+              </button>
+              <button 
+                className="canvas-zoom-btn" 
+                onClick={() => canvas?.handleZoom?.(100)}
+                title="Reset Zoom (Ctrl+0)"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                  <path d="M3 3v5h5"/>
+                </svg>
+              </button>
+            </div>
           </div>
         </main>
       </div>

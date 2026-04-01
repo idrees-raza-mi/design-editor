@@ -1,12 +1,29 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { fabric } from 'fabric'
 import { useUndoRedo } from './useUndoRedo'
 
 export function useFabricCanvas(canvasElementRef, { width, height } = {}) {
   const [canvas, setCanvas] = useState(null)
+  const [zoom, setZoom] = useState(100)
   const { saveState, undo, redo, canUndo, canRedo } = useUndoRedo()
   const fabricRef = useRef(null)
   const isProcessingRef = useRef(false)
+
+  const zoomRef = useRef(100)
+
+  const handleZoom = useCallback((newZoom) => {
+    if (!fabricRef.current) return
+    const clampedZoom = Math.min(Math.max(newZoom, 10), 500)
+    const fc = fabricRef.current
+    
+    fc.setZoom(clampedZoom / 100)
+    fc.setWidth(width * (clampedZoom / 100))
+    fc.setHeight(height * (clampedZoom / 100))
+    
+    zoomRef.current = clampedZoom
+    setZoom(clampedZoom)
+    fc.renderAll()
+  }, [width, height])
 
   useEffect(() => {
     if (!canvasElementRef.current) return
@@ -65,7 +82,33 @@ export function useFabricCanvas(canvasElementRef, { width, height } = {}) {
           saveState(fc)
         })
       }
+
+      if ((e.key === '+' || e.key === '=') && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault()
+        handleZoom(zoomRef.current + 10)
+      }
+
+      if ((e.key === '-') && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault()
+        handleZoom(zoomRef.current - 10)
+      }
+
+      if (e.key === '0' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault()
+        handleZoom(100)
+      }
     }
+
+    function handleMouseWheel(opt) {
+      const delta = opt.e.deltaY
+      let newZoom = zoomRef.current
+      newZoom = newZoom - delta / 10
+      handleZoom(newZoom)
+      opt.e.preventDefault()
+      opt.e.stopPropagation()
+    }
+
+    fc.on('mouse:wheel', handleMouseWheel)
 
     window.addEventListener('keydown', onKeyDown)
 
@@ -109,5 +152,5 @@ export function useFabricCanvas(canvasElementRef, { width, height } = {}) {
     }
   }, [])
 
-  return { canvas, canvasRef: canvasElementRef, saveState, undo, redo, canUndo, canRedo }
+  return { canvas, canvasRef: canvasElementRef, saveState, undo, redo, canUndo, canRedo, zoom, handleZoom }
 }

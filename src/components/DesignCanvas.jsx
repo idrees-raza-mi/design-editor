@@ -8,20 +8,24 @@ export default function DesignCanvas({
   svgClipPath = null,
   backgroundColor = '#ffffff',
   onCanvasReady,
-  onUndoStateChange
+  onUndoStateChange,
+  onZoomChange
 }) {
   const canvasElementRef = useRef(null)
-  const { canvas, canvasRef, saveState, undo, redo, canUndo, canRedo } = useFabricCanvas(
+  const { canvas, canvasRef, saveState, undo, redo, canUndo, canRedo, zoom, handleZoom } = useFabricCanvas(
     canvasElementRef,
     { width, height }
   )
 
   const [isEmpty, setIsEmpty] = useState(true)
 
-  // Notify parent when undo/redo availability changes
   useEffect(() => {
     if (onUndoStateChange) onUndoStateChange(canUndo, canRedo)
   }, [canUndo, canRedo])
+
+  useEffect(() => {
+    if (onZoomChange) onZoomChange(zoom)
+  }, [zoom, onZoomChange])
 
   useEffect(() => {
     if (!canvas) return
@@ -35,7 +39,7 @@ export default function DesignCanvas({
     saveState(canvas)
 
     if (onCanvasReady) {
-      onCanvasReady({ canvas, undo, redo, saveState })
+      onCanvasReady({ canvas, undo, redo, saveState, zoom, handleZoom })
     }
 
     function checkEmpty() {
@@ -51,14 +55,17 @@ export default function DesignCanvas({
     }
   }, [canvas])
 
+  const canvasWidth = width * (zoom / 100)
+  const canvasHeight = height * (zoom / 100)
+
   return (
-    <div className="canvas-wrapper" style={{ position: 'relative', width, height }}>
+    <div className="canvas-wrapper" style={{ position: 'relative', width: canvasWidth, height: canvasHeight }}>
       <canvas ref={canvasRef} />
 
       {svgClipPath && (
         <div
           className="canvas-guide-overlay"
-          style={{ width, height }}
+          style={{ width: canvasWidth, height: canvasHeight }}
           aria-hidden="true"
         />
       )}
