@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-export default function ShapeEditorPanel({ canvas, selectedObject, isShapeSelected, onBack, saveState, onDelete }) {
+export default function ShapeEditorPanel({ canvas, selectedObject, isShapeSelected, saveState, onDelete }) {
   const [fillColor, setFillColor] = useState('#000000')
   const [strokeColor, setStrokeColor] = useState('#000000')
   const [strokeWidth, setStrokeWidth] = useState(0)
@@ -83,9 +83,6 @@ export default function ShapeEditorPanel({ canvas, selectedObject, isShapeSelect
       {isShapeSelected && (
         <>
           <div className="shape-edit-header">
-            <button className="back-btn" onClick={onBack}>
-              <span className="back-arrow">←</span> Back
-            </button>
             <h3 className="edit-title">Edit Shape</h3>
           </div>
 

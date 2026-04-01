@@ -228,7 +228,6 @@ export default function LeftPanel({
           canvas={canvas} 
           selectedObject={selectedObject}
           isShapeSelected={isShape}
-          onBack={handleBack}
           saveState={saveState}
           onDelete={handleDelete}
         />
