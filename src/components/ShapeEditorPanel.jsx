@@ -1,85 +1,86 @@
 import { useState, useEffect } from 'react'
 
 export default function ShapeEditorPanel({ canvas, selectedObject, isShapeSelected, onBack, saveState, onDelete }) {
-  const [fillColor, setFillColor] = useState('#cccccc')
-  const [strokeColor, setStrokeColor] = useState('#888888')
-  const [strokeWidth, setStrokeWidth] = useState(2)
+  const [fillColor, setFillColor] = useState('#000000')
+  const [strokeColor, setStrokeColor] = useState('#000000')
+  const [strokeWidth, setStrokeWidth] = useState(0)
   const [opacity, setOpacity] = useState(100)
-  const [isHollow, setIsHollow] = useState(false)
   const [posX, setPosX] = useState(0)
   const [posY, setPosY] = useState(0)
+  const [isHollow, setIsHollow] = useState(false)
 
   useEffect(() => {
     if (selectedObject && isShapeSelected) {
-      setFillColor(selectedObject.fill || '#cccccc')
-      setStrokeColor(selectedObject.stroke || '#888888')
-      setStrokeWidth(selectedObject.strokeWidth || 2)
+      setFillColor(selectedObject.fill || '#000000')
+      setStrokeColor(selectedObject.stroke || '#000000')
+      setStrokeWidth(selectedObject.strokeWidth || 0)
       setOpacity(Math.round((selectedObject.opacity ?? 1) * 100))
-      setIsHollow(selectedObject.fill === 'transparent' || selectedObject.fill === null)
       setPosX(Math.round(selectedObject.left || 0))
       setPosY(Math.round(selectedObject.top || 0))
+      setIsHollow(selectedObject.fill === 'transparent' || selectedObject.fill === null)
     }
   }, [selectedObject, isShapeSelected])
 
-  function updateShape(updates) {
-    if (!canvas || !selectedObject) return
-    selectedObject.set(updates)
-    canvas.renderAll()
-    saveState?.(canvas)
-  }
-
   function handleFillColorChange(color) {
     setFillColor(color)
-    updateShape({ fill: isHollow ? 'transparent' : color })
+    if (selectedObject && !isHollow) {
+      selectedObject.set('fill', color)
+      canvas?.renderAll()
+      saveState?.(canvas)
+    }
+  }
+
+  function handleHollowToggle(e) {
+    const checked = e.target.checked
+    setIsHollow(checked)
+    if (selectedObject) {
+      selectedObject.set('fill', checked ? 'transparent' : fillColor)
+      canvas?.renderAll()
+      saveState?.(canvas)
+    }
   }
 
   function handleStrokeChange(color) {
     setStrokeColor(color)
-    updateShape({ stroke: color })
+    if (selectedObject) {
+      selectedObject.set('stroke', color)
+      canvas?.renderAll()
+      saveState?.(canvas)
+    }
   }
 
   function handleStrokeWidthChange(width) {
     setStrokeWidth(width)
-    updateShape({ strokeWidth: width })
+    if (selectedObject) {
+      selectedObject.set('strokeWidth', width)
+      canvas?.renderAll()
+      saveState?.(canvas)
+    }
   }
 
   function handleOpacityChange(val) {
     setOpacity(val)
-    updateShape({ opacity: val / 100 })
-  }
-
-  function handleHollowToggle() {
-    const newHollow = !isHollow
-    setIsHollow(newHollow)
-    if (newHollow) {
-      updateShape({ fill: 'transparent' })
-    } else {
-      updateShape({ fill: fillColor })
+    if (selectedObject) {
+      selectedObject.set('opacity', val / 100)
+      canvas?.renderAll()
+      saveState?.(canvas)
     }
   }
 
   function handlePosChange(axis, val) {
-    const num = Number(val)
-    if (axis === 'x') {
-      setPosX(num)
-      selectedObject.set({ left: num })
-    } else {
-      setPosY(num)
-      selectedObject.set({ top: num })
+    const num = parseInt(val) || 0
+    if (axis === 'x') setPosX(num)
+    else setPosY(num)
+    if (selectedObject) {
+      selectedObject.set(axis === 'x' ? 'left' : 'top', num)
+      canvas?.renderAll()
+      saveState?.(canvas)
     }
-    canvas.renderAll()
-    saveState?.(canvas)
   }
-
-  const showEditor = isShapeSelected && selectedObject
 
   return (
     <div className="panel-content shape-editor-panel">
-      {!showEditor ? (
-        <div className="no-selection">
-          <p>Select a shape on the canvas to edit</p>
-        </div>
-      ) : (
+      {isShapeSelected && (
         <>
           <div className="shape-edit-header">
             <button className="back-btn" onClick={onBack}>
@@ -150,13 +151,11 @@ export default function ShapeEditorPanel({ canvas, selectedObject, isShapeSelect
               onChange={(e) => handleStrokeWidthChange(parseInt(e.target.value))}
               className="slider"
             />
-            <span className="slider-value">{strokeWidth}</span>
+            <span className="slider-value">{strokeWidth}px</span>
           </div>
 
           <div className="control-row">
             <span className="control-label">Position</span>
-          </div>
-          <div className="position-inputs">
             <div className="pos-input">
               <label>X</label>
               <input
