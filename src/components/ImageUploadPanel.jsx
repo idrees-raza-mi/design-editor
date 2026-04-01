@@ -212,7 +212,7 @@ export default function ImageUploadPanel({ canvas, saveState, onBack, selectedOb
             <span>I Agree <a href="#terms">Terms and Conditions.</a></span>
           </label>
 
-          {recentUploads.length > 0 && (
+          {recentUploads.length > 0 ? (
             <div className="recent-uploads">
               <span className="recent-title">Recent uploaded</span>
               <div className="recent-grid">
@@ -226,6 +226,11 @@ export default function ImageUploadPanel({ canvas, saveState, onBack, selectedOb
                   />
                 ))}
               </div>
+            </div>
+          ) : (
+            <div className="recent-uploads">
+              <span className="recent-title">Recent uploaded</span>
+              <span className="no-recent">No recent uploads</span>
             </div>
           )}
         </>
