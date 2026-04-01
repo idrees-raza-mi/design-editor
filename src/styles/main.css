@@ -972,7 +972,7 @@ body,
   height: 32px;
   border: 1px solid var(--color-border);
   border-radius: 6px;
-  background: white;
+  background: #8b7355;
   cursor: pointer;
   padding: 3px;
   display: flex;
