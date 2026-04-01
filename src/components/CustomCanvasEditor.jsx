@@ -223,7 +223,8 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
         <TopBar
           title={editorTitle}
           productTitle={getConfig().productTitle}
-          onBack={null}
+          showBackButton={leftPanelView !== 'menu'}
+          onBack={handleBack}
         />
         <div className="editor-main">
           <LeftPanel
