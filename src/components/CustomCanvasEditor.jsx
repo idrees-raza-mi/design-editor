@@ -5,6 +5,7 @@ import BottomBar from './BottomBar'
 import DimensionOverlay from './DimensionOverlay'
 import DesignCanvas from './DesignCanvas'
 import CanvasBackgroundControls from './CanvasBackgroundControls'
+import LayersControls from './LayersControls'
 import SavingOverlay from './SavingOverlay'
 import SuccessOverlay from './SuccessOverlay'
 import { getConfig } from '../config/editorConfig'
@@ -196,6 +197,7 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
         />
 
         <CanvasBackgroundControls canvas={canvas} saveState={(c) => saveFnRef.current?.(c)} defaultColor={design.backgroundColor} />
+        <LayersControls canvas={canvas} />
 
         <main className="canvas-area">
           <div className="canvas-wrapper">
