@@ -2,28 +2,28 @@ import opentype from 'opentype.js'
 import Warp from 'warpjs'
 
 const fontUrlMap = {
-  'Playfair Display': new URL('../fonts/playfairdisplay/font.woff2', import.meta.url),
-  'Great Vibes': new URL('../fonts/greatvibes/font.woff2', import.meta.url),
-  'Montserrat': new URL('../fonts/montserrat/font.woff2', import.meta.url),
-  'Bebas Neue': new URL('../fonts/bebasneue/font.woff2', import.meta.url),
-  'Pacifico': new URL('../fonts/pacifico/font.woff2', import.meta.url),
-  'Dancing Script': new URL('../fonts/dancingscript/font.woff2', import.meta.url),
-  'Oswald': new URL('../fonts/oswald/font.woff2', import.meta.url),
-  'Lobster': new URL('../fonts/lobster/font.woff2', import.meta.url),
-  'Raleway': new URL('../fonts/raleway/font.woff2', import.meta.url),
-  'Cinzel': new URL('../fonts/cinzel/font.woff2', import.meta.url),
-  'Sacramento': new URL('../fonts/sacramento/font.woff2', import.meta.url),
-  'Abril Fatface': new URL('../fonts/abrilfatface/font.woff2', import.meta.url),
-  'Josefin Sans': new URL('../fonts/josefinsans/font.woff2', import.meta.url),
-  'Satisfy': new URL('../fonts/satisfy/font.woff2', import.meta.url),
-  'Righteous': new URL('../fonts/righteous/font.woff2', import.meta.url),
+  'Playfair Display': '/fonts/playfairdisplay/font.woff2',
+  'Great Vibes': '/fonts/greatvibes/font.woff2',
+  'Montserrat': '/fonts/montserrat/font.woff2',
+  'Bebas Neue': '/fonts/bebasneue/font.woff2',
+  'Pacifico': '/fonts/pacifico/font.woff2',
+  'Dancing Script': '/fonts/dancingscript/font.woff2',
+  'Oswald': '/fonts/oswald/font.woff2',
+  'Lobster': '/fonts/lobster/font.woff2',
+  'Raleway': '/fonts/raleway/font.woff2',
+  'Cinzel': '/fonts/cinzel/font.woff2',
+  'Sacramento': '/fonts/sacramento/font.woff2',
+  'Abril Fatface': '/fonts/abrilfatface/font.woff2',
+  'Josefin Sans': '/fonts/josefinsans/font.woff2',
+  'Satisfy': '/fonts/satisfy/font.woff2',
+  'Righteous': '/fonts/righteous/font.woff2',
 }
 
 const _opentypeFontCache = new Map()
 
 export async function resolveFontPath(fontFamily) {
   const url = fontUrlMap[fontFamily] || fontUrlMap['Montserrat']
-  return url.href
+  return url
 }
 
 const WARP_PRESETS = [

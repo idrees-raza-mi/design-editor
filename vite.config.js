@@ -31,6 +31,9 @@ export default defineConfig({
     }
   ],
   publicDir: 'public',
+  define: {
+    'process.env': {}
+  },
   build: {
     lib: {
       entry: 'src/index.jsx',

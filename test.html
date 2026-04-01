@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- Open after running: npm run build -->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Design Editor – Test</title>
+    <script src="./dist/fabric.min.js"></script>
     <link rel="stylesheet" href="./dist/editor.css" />
     <script>
       window.__EDITOR_CONFIG__ = {
@@ -14,6 +14,10 @@
         productTitle: 'Bear Board 2FT'
       }
     </script>
+    <style>
+      html, body { margin: 0; padding: 0; height: 100%; }
+      #design-editor { height: 100vh; width: 100%; }
+    </style>
   </head>
   <body>
     <div id="design-editor"></div>
