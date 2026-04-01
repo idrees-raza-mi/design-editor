@@ -1,5 +1,14 @@
 import { useState } from 'react'
 
+const LAYER_ICONS = {
+  'i-text': 'T',
+  'image': '🖼',
+  'rect': '▢',
+  'circle': '○',
+  'path': '✎',
+  'default': '◉'
+}
+
 export default function LayersControls({ canvas, onLayersChange }) {
   const [showLayers, setShowLayers] = useState(false)
   const [layers, setLayers] = useState([])
@@ -8,7 +17,7 @@ export default function LayersControls({ canvas, onLayersChange }) {
     if (!canvas) return
     const objects = canvas.getObjects().map((obj, idx) => ({
       id: obj.id || `layer-${idx}`,
-      name: obj.type === 'i-text' ? 'Text' : obj.type === 'image' ? 'Image' : obj.type === 'rect' ? 'Rectangle' : obj.type === 'circle' ? 'Circle' : obj.type === 'path' ? 'Shape' : `Object ${idx + 1}`,
+      name: obj.type === 'i-text' ? 'Text' : obj.type === 'image' ? 'Image' : obj.type === 'rect' ? 'Rectangle' : obj.type === 'circle' ? 'Circle' : obj.type === 'path' ? 'Shape' : obj.customName || `Layer ${idx + 1}`,
       visible: obj.visible !== false,
       locked: obj.selectable === false,
       type: obj.type,
@@ -74,11 +83,11 @@ export default function LayersControls({ canvas, onLayersChange }) {
   return (
     <div className="canvas-layers-controls">
       <button 
-        className="canvas-bg-btn canvas-layers-btn"
+        className="canvas-layers-btn"
         onClick={toggleLayersPanel}
         title="Layers"
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <polygon points="12 2 2 7 12 12 22 7 12 2"/>
           <polyline points="2 17 12 22 22 17"/>
           <polyline points="2 12 12 17 22 12"/>
@@ -103,47 +112,71 @@ export default function LayersControls({ canvas, onLayersChange }) {
                   onClick={() => handleLayerSelect(layer)}
                 >
                   <div className="canvas-layer-icon">
-                    {layer.type === 'i-text' && 'T'}
-                    {layer.type === 'image' && '🖼'}
-                    {(layer.type === 'rect' || layer.type === 'circle') && '□'}
-                    {layer.type === 'path' && '✎'}
+                    {LAYER_ICONS[layer.type] || LAYER_ICONS.default}
                   </div>
                   <span className="canvas-layer-name">{layer.name}</span>
                   <div className="canvas-layer-actions">
                     <button 
                       className={`canvas-layer-action ${!layer.visible ? 'inactive' : ''}`}
                       onClick={(e) => handleLayerVisibility(layer, e)}
-                      title={layer.visible ? 'Hide' : 'Show'}
+                      title={layer.visible ? 'Hide Layer' : 'Show Layer'}
                     >
-                      {layer.visible ? '👁' : '👁‍🗨'}
+                      {layer.visible ? (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                          <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                      ) : (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.72a3 3 0 1 1-4.24-4.24"/>
+                          <line x1="1" y1="1" x2="23" y2="23"/>
+                        </svg>
+                      )}
                     </button>
                     <button 
                       className={`canvas-layer-action ${layer.locked ? 'active' : ''}`}
                       onClick={(e) => handleLayerLock(layer, e)}
-                      title={layer.locked ? 'Unlock' : 'Lock'}
+                      title={layer.locked ? 'Unlock Layer' : 'Lock Layer'}
                     >
-                      {layer.locked ? '🔒' : '🔓'}
+                      {layer.locked ? (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                      ) : (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                          <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+                        </svg>
+                      )}
                     </button>
                     <button 
                       className="canvas-layer-action"
                       onClick={(e) => handleMoveLayer(layer, 'up', e)}
-                      title="Move Up"
+                      title="Bring Forward"
                     >
-                      ↑
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="18 15 12 9 6 15"/>
+                      </svg>
                     </button>
                     <button 
                       className="canvas-layer-action"
                       onClick={(e) => handleMoveLayer(layer, 'down', e)}
-                      title="Move Down"
+                      title="Send Backward"
                     >
-                      ↓
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="6 9 12 15 18 9"/>
+                      </svg>
                     </button>
                     <button 
                       className="canvas-layer-action delete"
                       onClick={(e) => handleLayerDelete(layer, e)}
-                      title="Delete"
+                      title="Delete Layer"
                     >
-                      🗑
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                      </svg>
                     </button>
                   </div>
                 </div>

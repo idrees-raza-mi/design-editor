@@ -312,6 +312,24 @@ body,
   z-index: 10;
 }
 
+.canvas-layers-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.canvas-layers-btn:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
 .canvas-layers-btn svg {
   stroke-width: 1.5;
 }
@@ -362,10 +380,10 @@ body,
 .canvas-layer-item {
   display: flex;
   align-items: center;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
-  gap: 8px;
+  gap: 10px;
 }
 
 .canvas-layer-item:hover {
@@ -373,14 +391,16 @@ body,
 }
 
 .canvas-layer-icon {
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
-  background: #f5f5f5;
-  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  background: #e8f4fc;
+  color: #2d9cdb;
+  border-radius: 6px;
 }
 
 .canvas-layer-name {
@@ -389,40 +409,57 @@ body,
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--color-text-primary);
 }
 
 .canvas-layer-actions {
   display: flex;
-  gap: 2px;
+  gap: 4px;
 }
 
 .canvas-layer-action {
-  width: 24px;
-  height: 24px;
-  border: none;
-  background: none;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #e0e0e0;
+  background: white;
   cursor: pointer;
-  font-size: 12px;
-  border-radius: 4px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #555;
+  transition: all 0.15s;
 }
 
 .canvas-layer-action:hover {
-  background: #f0f0f0;
+  background: #f5f5f5;
+  border-color: #ccc;
 }
 
 .canvas-layer-action.inactive {
   opacity: 0.4;
+  background: #f5f5f5;
 }
 
 .canvas-layer-action.active {
-  background: #fff3cd;
+  background: #fff8e1;
+  border-color: #ffc107;
+  color: #f59e0b;
+}
+
+.canvas-layer-action.active {
+  background: #fff8e1;
+  border-color: #ffc107;
+  color: #f59e0b;
+}
+
+.canvas-layer-action.delete {
+  color: #ef4444;
 }
 
 .canvas-layer-action.delete:hover {
-  background: #ffebee;
+  background: #fef2f2;
+  border-color: #ef4444;
 }
 
 /* ========================================
