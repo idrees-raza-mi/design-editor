@@ -10,21 +10,8 @@ const LAYER_ICONS = {
 }
 
 export default function LayersControls({ canvas, onLayersChange, showPanel, onTogglePanel, onCloseOther }) {
-  const [showLayers, setShowLayers] = useState(false)
   const [layers, setLayers] = useState([])
   const popupRef = useRef(null)
-
-  useEffect(() => {
-    function handleClickOutside(e) {
-      if (popupRef.current && !popupRef.current.contains(e.target)) {
-        onTogglePanel()
-      }
-    }
-    if (showPanel) {
-      document.addEventListener('mousedown', handleClickOutside)
-      return () => document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [showPanel, onTogglePanel])
 
   useEffect(() => {
     if (showPanel && onCloseOther) {
@@ -161,7 +148,7 @@ export default function LayersControls({ canvas, onLayersChange, showPanel, onTo
         <div className="canvas-layers-popup">
           <div className="canvas-layers-header">
             <span>Layers ({layers.length})</span>
-            <button className="canvas-layers-close" onClick={() => setShowLayers(false)}>×</button>
+            <button className="canvas-layers-close" onClick={onTogglePanel}>×</button>
           </div>
           
           {layers.length === 0 ? (

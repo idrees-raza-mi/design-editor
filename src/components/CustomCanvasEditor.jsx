@@ -30,6 +30,7 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
   const [previousView, setPreviousView] = useState(null)
   const [showBgColorPicker, setShowBgColorPicker] = useState(false)
   const [showLayers, setShowLayers] = useState(false)
+  const [hasSelection, setHasSelection] = useState(false)
   const undoRef = useRef(null)
   const saveFnRef = useRef(null)
 
@@ -51,6 +52,10 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
     saveFnRef.current = saveState
     setCanvas(fc)
     window.__fabricCanvas = fc
+
+    fc.on('selection:created', () => setHasSelection(true))
+    fc.on('selection:updated', () => setHasSelection(true))
+    fc.on('selection:cleared', () => setHasSelection(false))
   }
 
   function handleUndoStateChange(u, r) {
@@ -66,6 +71,34 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
     if (canvas && canvas.redoRef) {
       canvas.redoRef()
     }
+  }
+
+  function handleDuplicate() {
+    if (!canvas) return
+    const active = canvas.getActiveObject()
+    if (!active) return
+    
+    active.clone((cloned) => {
+      cloned.set({
+        left: active.left + 20,
+        top: active.top + 20,
+      })
+      
+      if (cloned.type === 'activeSelection') {
+        cloned.canvas = canvas
+        cloned.forEachObject((obj) => {
+          obj.set({
+            left: obj.left + 20,
+            top: obj.top + 20,
+          })
+        })
+      }
+      
+      canvas.add(cloned)
+      canvas.setActiveObject(cloned)
+      canvas.renderAll()
+      saveFnRef.current?.(canvas)
+    })
   }
 
   function handleLeftPanelViewChange(view) {
@@ -272,6 +305,14 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
                 <path d="M3 3v5h5"/>
               </svg>
             </button>
+            {canvas && hasSelection && (
+              <button className="canvas-duplicate-btn" onClick={handleDuplicate} title="Duplicate (Ctrl+D)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+              </button>
+            )}
           </div>
         </main>
       </div>

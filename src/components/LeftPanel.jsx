@@ -26,7 +26,8 @@ export default function LeftPanel({
       if (obj) {
         setSelectedObject(obj)
         const isImg = obj.type === 'image'
-        const isTxt = obj.type === 'i-text' || obj.type === 'text'
+        // treat warped text paths as text so the text panel stays open
+        const isTxt = obj.type === 'i-text' || obj.type === 'text' || obj._isWarpedText === true
         const isRect = obj.type === 'rect'
         const isCircle = obj.type === 'circle'
         const isTri = obj.type === 'triangle'

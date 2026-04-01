@@ -29,6 +29,7 @@ export default function SavingOverlay({ visible, steps, error, onRetry, onClose 
   return (
     <div className="saving-overlay">
       <div className="saving-card">
+        <button className="saving-close-btn" onClick={onClose}>×</button>
         <h2 className="saving-title">Saving your design...</h2>
         
         <div className="saving-steps">

@@ -14,15 +14,19 @@ export default function WarpEffectsPanel({ canvas, selectedObject, saveState, on
   const debounceTimer = useRef(null)
 
   async function handleApplyWarp(warpId, strengthVal) {
-    if (!canvas || !selectedObject) return
-    
+    if (!canvas) return
+    // Always grab the current active object — selectedObject prop can be stale
+    // after a previous warp replaced the original IText with a Path
+    const obj = canvas.getActiveObject() || selectedObject
+    if (!obj) return
+
     setApplying(true)
     setApplyError(null)
-    
+
     try {
       await applyWarpToText(
         canvas,
-        selectedObject,
+        obj,
         warpId,
         strengthVal / 100,
         saveState
@@ -31,7 +35,7 @@ export default function WarpEffectsPanel({ canvas, selectedObject, saveState, on
       setApplyError(err.message)
       setTimeout(() => setApplyError(null), 3000)
     }
-    
+
     setApplying(false)
   }
 
@@ -53,8 +57,9 @@ export default function WarpEffectsPanel({ canvas, selectedObject, saveState, on
   }
 
   function handleCancel() {
+    const fabric = window.fabric
     const obj = canvas?.getActiveObject()
-    if (obj?._warpSource) {
+    if (fabric && obj?._warpSource) {
       const src = obj._warpSource
       const restored = new fabric.IText(src.text, {
         left: src.left,

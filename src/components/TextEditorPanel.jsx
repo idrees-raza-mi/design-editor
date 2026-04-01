@@ -251,8 +251,9 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
             <div className="warp-edit-banner">
               <span>✏ Text is warped</span>
               <button onClick={() => {
+                const fabric = window.fabric
                 const obj = canvas.getActiveObject()
-                if (obj?._warpSource) {
+                if (fabric && obj?._warpSource) {
                   const src = obj._warpSource
                   const restored = new fabric.IText(src.text, {
                     left: src.left,

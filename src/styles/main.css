@@ -217,7 +217,30 @@ body,
   background: white;
   border-color: var(--color-error);
   color: var(--color-error);
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+}
+
+.canvas-duplicate-btn {
+  position: absolute;
+  top: 12px;
+  right: 50px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.15s;
+}
+
+.canvas-duplicate-btn:hover {
+  background: white;
+  border-color: var(--color-accent);
+  color: var(--color-accent);
 }
 
 .tab-button {
@@ -1673,6 +1696,7 @@ body,
   padding: 32px 40px;
   min-width: 360px;
   text-align: center;
+  position: relative;
 }
 
 .saving-title,
@@ -1680,6 +1704,22 @@ body,
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 24px;
+  color: var(--color-text-primary);
+}
+
+.saving-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  line-height: 1;
+}
+
+.saving-close-btn:hover {
   color: var(--color-text-primary);
 }
 

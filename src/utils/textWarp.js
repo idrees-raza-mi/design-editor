@@ -1,29 +1,47 @@
 import opentype from 'opentype.js'
 import Warp from 'warpjs'
 
+function getBaseUrl() {
+  if (typeof window !== 'undefined') {
+    const scripts = document.getElementsByTagName('script')
+    for (let i = scripts.length - 1; i >= 0; i--) {
+      const src = scripts[i].src
+      if (src && src.includes('editor.js')) {
+        const base = src.substring(0, src.lastIndexOf('/') + 1)
+        return base
+      }
+    }
+    if (window.__EDITOR_CONFIG__ && window.__EDITOR_CONFIG__.__baseUrl) {
+      return window.__EDITOR_CONFIG__.__baseUrl
+    }
+  }
+  return ''
+}
+
 const fontUrlMap = {
-  'Playfair Display': '/fonts/playfairdisplay/font.woff2',
-  'Great Vibes': '/fonts/greatvibes/font.woff2',
-  'Montserrat': '/fonts/montserrat/font.woff2',
-  'Bebas Neue': '/fonts/bebasneue/font.woff2',
-  'Pacifico': '/fonts/pacifico/font.woff2',
-  'Dancing Script': '/fonts/dancingscript/font.woff2',
-  'Oswald': '/fonts/oswald/font.woff2',
-  'Lobster': '/fonts/lobster/font.woff2',
-  'Raleway': '/fonts/raleway/font.woff2',
-  'Cinzel': '/fonts/cinzel/font.woff2',
-  'Sacramento': '/fonts/sacramento/font.woff2',
-  'Abril Fatface': '/fonts/abrilfatface/font.woff2',
-  'Josefin Sans': '/fonts/josefinsans/font.woff2',
-  'Satisfy': '/fonts/satisfy/font.woff2',
-  'Righteous': '/fonts/righteous/font.woff2',
+  'Playfair Display': 'fonts/playfairdisplay/font.woff2',
+  'Great Vibes': 'fonts/greatvibes/font.woff2',
+  'Montserrat': 'fonts/montserrat/font.woff2',
+  'Bebas Neue': 'fonts/bebasneue/font.woff2',
+  'Pacifico': 'fonts/pacifico/font.woff2',
+  'Dancing Script': 'fonts/dancingscript/font.woff2',
+  'Oswald': 'fonts/oswald/font.woff2',
+  'Lobster': 'fonts/lobster/font.woff2',
+  'Raleway': 'fonts/raleway/font.woff2',
+  'Cinzel': 'fonts/cinzel/font.woff2',
+  'Sacramento': 'fonts/sacramento/font.woff2',
+  'Abril Fatface': 'fonts/abrilfatface/font.woff2',
+  'Josefin Sans': 'fonts/josefinsans/font.woff2',
+  'Satisfy': 'fonts/satisfy/font.woff2',
+  'Righteous': 'fonts/righteous/font.woff2',
 }
 
 const _opentypeFontCache = new Map()
 
 export async function resolveFontPath(fontFamily) {
-  const url = fontUrlMap[fontFamily] || fontUrlMap['Montserrat']
-  return url
+  const relativePath = fontUrlMap[fontFamily] || fontUrlMap['Montserrat']
+  const baseUrl = getBaseUrl()
+  return baseUrl + relativePath
 }
 
 const WARP_PRESETS = [
@@ -228,6 +246,9 @@ export async function applyWarpToText(
   strength,
   saveState
 ) {
+  const fabric = window.fabric
+  if (!fabric) throw new Error('Fabric.js is not loaded.')
+
   if (warpId === 'straight') {
     const source = fabricTextObj._warpSource
     if (source) {
@@ -271,16 +292,22 @@ export async function applyWarpToText(
 
   const fontPath = await resolveFontPath(source.fontFamily)
   
+  let opentypeFont = null
+  
   if (_opentypeFontCache.has(fontPath)) {
     opentypeFont = _opentypeFontCache.get(fontPath)
   } else {
     try {
       const response = await fetch(fontPath)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
       const arrayBuffer = await response.arrayBuffer()
       opentypeFont = opentype.parse(arrayBuffer)
       _opentypeFontCache.set(fontPath, opentypeFont)
     } catch (err) {
-      throw new Error('Could not load font. Try selecting a different font first.')
+      console.error('Font loading error:', err)
+      throw new Error(`Could not load font "${source.fontFamily}". Try selecting a different font first.`)
     }
   }
 

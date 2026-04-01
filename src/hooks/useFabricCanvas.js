@@ -24,7 +24,8 @@ export function useFabricCanvas(canvasElementRef, { width, height } = {}) {
     function onKeyDown(e) {
       const tag = e.target.tagName.toLowerCase()
       if (tag === 'input' || tag === 'textarea') return
-      if (e.key === 'Delete' || e.key === 'Backspace') {
+      
+      if ((e.key === 'Delete' || e.key === 'Backspace') && !e.ctrlKey && !e.metaKey) {
         const active = fc.getActiveObject()
         if (!active) return
         if (active.type === 'activeSelection') {
@@ -35,6 +36,34 @@ export function useFabricCanvas(canvasElementRef, { width, height } = {}) {
         }
         fc.renderAll()
         saveState(fc)
+      }
+      
+      if ((e.key === 'd' || e.key === 'D') && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault()
+        const active = fc.getActiveObject()
+        if (!active) return
+        
+        active.clone((cloned) => {
+          cloned.set({
+            left: active.left + 20,
+            top: active.top + 20,
+          })
+          
+          if (cloned.type === 'activeSelection') {
+            cloned.canvas = fc
+            cloned.forEachObject((obj) => {
+              obj.set({
+                left: obj.left + 20,
+                top: obj.top + 20,
+              })
+            })
+          }
+          
+          fc.add(cloned)
+          fc.setActiveObject(cloned)
+          fc.renderAll()
+          saveState(fc)
+        })
       }
     }
 
