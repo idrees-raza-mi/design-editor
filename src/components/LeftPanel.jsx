@@ -200,7 +200,6 @@ export default function LeftPanel({
         <ImageUploadPanel 
           canvas={canvas} 
           saveState={saveState} 
-          onBack={handleBack}
           selectedObject={selectedObject}
           isImageSelected={isImage}
           onDelete={handleDelete}

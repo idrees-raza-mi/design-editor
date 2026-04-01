@@ -34,7 +34,7 @@ function saveRecentUpload(dataUrl) {
   } catch {}
 }
 
-export default function ImageUploadPanel({ canvas, saveState, onBack, selectedObject, isImageSelected, onDelete }) {
+export default function ImageUploadPanel({ canvas, saveState, selectedObject, isImageSelected, onDelete }) {
   const [dragging, setDragging] = useState(false)
   const [loading, setLoading] = useState(false)
   const [agreed, setAgreed] = useState(true)
@@ -237,9 +237,6 @@ export default function ImageUploadPanel({ canvas, saveState, onBack, selectedOb
       ) : (
         <div className="image-edit-view">
           <div className="edit-header">
-            <button className="back-btn" onClick={onBack}>
-              <span className="back-arrow">←</span> Back
-            </button>
             <h3 className="edit-title">Edit Image</h3>
           </div>
 
