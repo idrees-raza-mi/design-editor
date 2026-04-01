@@ -325,7 +325,7 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
               <button 
                 className="canvas-zoom-btn" 
                 onClick={() => canvas?.handleZoom?.(zoomLevel - 10)}
-                disabled={zoomLevel <= 10}
+                disabled={zoomLevel <= 60}
                 title="Zoom Out (Ctrl+-)"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

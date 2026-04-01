@@ -13,7 +13,7 @@ export function useFabricCanvas(canvasElementRef, { width, height } = {}) {
 
   const handleZoom = useCallback((newZoom) => {
     if (!fabricRef.current) return
-    const clampedZoom = Math.min(Math.max(newZoom, 10), 500)
+    const clampedZoom = Math.round(Math.min(Math.max(newZoom, 60), 500))
     const fc = fabricRef.current
     
     fc.setZoom(clampedZoom / 100)
