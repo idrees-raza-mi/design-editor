@@ -6,6 +6,7 @@ export function useFabricCanvas(canvasElementRef, { width, height } = {}) {
   const [canvas, setCanvas] = useState(null)
   const { saveState, undo, redo, canUndo, canRedo } = useUndoRedo()
   const fabricRef = useRef(null)
+  const isProcessingRef = useRef(false)
 
   useEffect(() => {
     if (!canvasElementRef.current) return
@@ -39,8 +40,37 @@ export function useFabricCanvas(canvasElementRef, { width, height } = {}) {
 
     window.addEventListener('keydown', onKeyDown)
 
-    fc.on('object:added', () => saveState(fc))
-    fc.on('object:modified', () => saveState(fc))
+    function handleObjectAdded() {
+      if (!isProcessingRef.current) {
+        saveState(fc)
+      }
+    }
+
+    function handleObjectRemoved() {
+      if (!isProcessingRef.current) {
+        saveState(fc)
+      }
+    }
+
+    function handleObjectModified() {
+      if (!isProcessingRef.current) {
+        saveState(fc)
+      }
+    }
+
+    function handlePathCreated() {
+      saveState(fc)
+    }
+
+    function handleSelectionCleared() {
+      saveState(fc)
+    }
+
+    fc.on('object:added', handleObjectAdded)
+    fc.on('object:removed', handleObjectRemoved)
+    fc.on('object:modified', handleObjectModified)
+    fc.on('path:created', handlePathCreated)
+    fc.on('selection:cleared', handleSelectionCleared)
 
     setCanvas(fc)
 
