@@ -3,6 +3,7 @@ import MainToolMenu from './MainToolMenu'
 import ImageUploadPanel from './ImageUploadPanel'
 import TextEditorPanel from './TextEditorPanel'
 import ShapeEditorPanel from './ShapeEditorPanel'
+import Toast from './Toast'
 
 export default function LeftPanel({ 
     view, 
@@ -15,6 +16,7 @@ export default function LeftPanel({
   const [isImage, setIsImage] = useState(false)
   const [isText, setIsText] = useState(false)
   const [isShape, setIsShape] = useState(false)
+  const [toast, setToast] = useState(null)
 
   useEffect(() => {
     if (!canvas) return
@@ -211,6 +213,7 @@ export default function LeftPanel({
           onBack={handleBack}
           saveState={saveState}
           onDelete={handleDelete}
+          onToast={setToast}
         />
       )
     }
@@ -235,6 +238,13 @@ export default function LeftPanel({
 
   return (
     <aside className="left-panel">
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
       {renderContent()}
     </aside>
   )
