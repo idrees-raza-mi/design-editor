@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
-import { TEXT_EFFECT_PRESETS, applyTextEffect } from '../utils/textEffects'
+import { useState, useEffect, useRef } from 'react'
+import { applyTextEffect } from '../utils/textEffects'
 import { loadFont } from '../utils/fontLoader'
 import TextEffectPicker from './TextEffectPicker'
 import WarpEffectsPanel from './WarpEffectsPanel'
-import { WARP_PRESETS } from '../utils/textWarp'
+import { WARP_PRESETS, applyWarpToText } from '../utils/textWarp'
 
 const SIMPLE_FONTS = [
   'Arial',
@@ -24,7 +24,6 @@ const SIMPLE_FONTS = [
   'Impact',
   'Century Gothic',
   'Lucida Console',
-  'Verdana',
   'Arial Black',
   'Lucida Sans Unicode',
   'Arial Narrow',
@@ -83,7 +82,6 @@ const GRAPHIC_FONTS = [
   'Niconne',
   'Nosifer',
   'Passion One',
-  'Permanent Marker',
   'Play',
   'Pompiere',
   'Ranchers',
@@ -102,7 +100,6 @@ const GRAPHIC_FONTS = [
   'Stretch Pro',
   'Sunshiney',
   'The Girl Next Door',
-  'Titan One',
   'Ultra',
   'UnifrakturMaguntia',
   'Vibur',
@@ -110,7 +107,6 @@ const GRAPHIC_FONTS = [
   'Wallpoet',
   'Warnes',
   'Wellfleet',
-  'Xarrov',
   'Yeseva One',
   'Zcool KuaiLe',
   'Zilla Slab'
@@ -124,41 +120,89 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
   const [fillColor, setFillColor] = useState('#000000')
   const [fontTab, setFontTab] = useState('simple')
   const [fontWeight, setFontWeight] = useState('normal')
+  const [fontStyle, setFontStyle] = useState('normal')
   const [textAlign, setTextAlign] = useState('left')
   const [underline, setUnderline] = useState(false)
   const [posX, setPosX] = useState(0)
   const [posY, setPosY] = useState(0)
   const [showWarpPanel, setShowWarpPanel] = useState(false)
 
+  // Debounce timer for warp re-renders triggered by sliders / typing
+  const warpDebounceRef = useRef(null)
+
   useEffect(() => {
     GRAPHIC_FONTS.forEach((font) => loadFont(font))
   }, [])
 
+  // Sync panel state from the selected object.
+  // For warped images, read from _warpSource so all the original text
+  // properties are reflected in the controls.
   useEffect(() => {
-    if (selectedObject && isTextSelected) {
-      setText(selectedObject.text || '')
-      setFontFamily(selectedObject.fontFamily || 'Arial')
-      setFontSize(selectedObject.fontSize || 36)
-      setCharSpacing(selectedObject.charSpacing || 0)
-      setFillColor(typeof selectedObject.fill === 'string' ? selectedObject.fill : '#000000')
-      setFontWeight(selectedObject.fontStyle || 'normal')
-      setTextAlign(selectedObject.textAlign || 'left')
-      setUnderline(!!selectedObject.underline)
-      setPosX(Math.round(selectedObject.left || 0))
-      setPosY(Math.round(selectedObject.top || 0))
-    }
+    if (!selectedObject || !isTextSelected) return
+
+    const src = (selectedObject._isWarpedText && selectedObject._warpSource)
+      ? selectedObject._warpSource
+      : selectedObject
+
+    setText(src.text || '')
+    setFontFamily(src.fontFamily || 'Arial')
+    setFontSize(src.fontSize || 36)
+    setCharSpacing(src.charSpacing || 0)
+    setFillColor(typeof src.fill === 'string' ? src.fill : '#000000')
+    setFontWeight(src.fontWeight || 'normal')
+    setFontStyle(src.fontStyle || 'normal')
+    setTextAlign(src.textAlign || 'left')
+    setUnderline(!!src.underline)
+    // Position comes from the actual canvas object, not the source
+    setPosX(Math.round(selectedObject.left || 0))
+    setPosY(Math.round(selectedObject.top || 0))
   }, [selectedObject, isTextSelected])
 
+  // ── Warp-aware update helpers ────────────────────────────────────────────
+
+  // Immediately re-apply warp with updated source properties.
+  // Used for discrete changes: font family, bold/italic toggle.
+  function immediateWarpUpdate(updates) {
+    const obj = canvas?.getActiveObject()
+    if (!obj?._isWarpedText) return
+    Object.assign(obj._warpSource, updates)
+    const { warpId, strength } = obj._warpSource
+    applyWarpToText(canvas, obj, warpId, strength, saveState).catch(console.error)
+  }
+
+  // Debounced warp re-apply for slider / text input changes.
+  function scheduleWarpUpdate(updates) {
+    clearTimeout(warpDebounceRef.current)
+    warpDebounceRef.current = setTimeout(() => {
+      const obj = canvas?.getActiveObject()
+      if (!obj?._isWarpedText) return
+      Object.assign(obj._warpSource, updates)
+      const { warpId, strength } = obj._warpSource
+      applyWarpToText(canvas, obj, warpId, strength, saveState).catch(console.error)
+    }, 300)
+  }
+
+  // Generic update: dispatches to warp-update or plain Fabric set.
   function updateTextObject(updates) {
     if (!canvas || !selectedObject) return
-    selectedObject.set(updates)
-    canvas.renderAll()
-    saveState?.(canvas)
+    if (selectedObject._isWarpedText) {
+      immediateWarpUpdate(updates)
+    } else {
+      selectedObject.set(updates)
+      canvas.renderAll()
+      saveState?.(canvas)
+    }
   }
+
+  // ── Handlers ─────────────────────────────────────────────────────────────
 
   function handleTextChange(newText) {
     setText(newText)
-    updateTextObject({ text: newText })
+    if (selectedObject?._isWarpedText) {
+      scheduleWarpUpdate({ text: newText })
+    } else {
+      updateTextObject({ text: newText })
+    }
   }
 
   function handleFontFamilyChange(family) {
@@ -168,17 +212,29 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
 
   function handleFontSizeChange(size) {
     setFontSize(size)
-    updateTextObject({ fontSize: size })
+    if (selectedObject?._isWarpedText) {
+      scheduleWarpUpdate({ fontSize: size })
+    } else {
+      updateTextObject({ fontSize: size })
+    }
   }
 
   function handleCharSpacingChange(spacing) {
     setCharSpacing(spacing)
-    updateTextObject({ charSpacing: spacing })
+    if (selectedObject?._isWarpedText) {
+      scheduleWarpUpdate({ charSpacing: spacing })
+    } else {
+      updateTextObject({ charSpacing: spacing })
+    }
   }
 
   function handleFillColorChange(color) {
     setFillColor(color)
-    updateTextObject({ fill: color })
+    if (selectedObject?._isWarpedText) {
+      scheduleWarpUpdate({ fill: color })
+    } else {
+      updateTextObject({ fill: color })
+    }
   }
 
   function toggleBold() {
@@ -188,8 +244,8 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
   }
 
   function toggleItalic() {
-    const newStyle = fontWeight === 'italic' ? 'normal' : 'italic'
-    setFontWeight(newStyle)
+    const newStyle = fontStyle === 'italic' ? 'normal' : 'italic'
+    setFontStyle(newStyle)
     updateTextObject({ fontStyle: newStyle })
   }
 
@@ -204,29 +260,59 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
     updateTextObject({ textAlign: align })
   }
 
+  // Position: move the image directly without re-warping.
+  // Also keep _warpSource in sync so restoring text lands at the right spot.
   function handlePosChange(axis, val) {
     const num = Number(val)
+    const obj = canvas?.getActiveObject() || selectedObject
+    if (!obj || !canvas) return
+
     if (axis === 'x') {
       setPosX(num)
-      selectedObject.set({ left: num })
+      obj.set({ left: num })
+      if (obj._warpSource) obj._warpSource.left = num
     } else {
       setPosY(num)
-      selectedObject.set({ top: num })
+      obj.set({ top: num })
+      if (obj._warpSource) obj._warpSource.top = num
     }
     canvas.renderAll()
     saveState?.(canvas)
   }
 
   function handleTextEffectSelect(preset) {
-    if (selectedObject && canvas) {
+    if (selectedObject && canvas && !selectedObject._isWarpedText) {
       applyTextEffect(selectedObject, preset, canvas)
       saveState?.(canvas)
     }
   }
 
-  const fonts = fontTab === 'simple' ? SIMPLE_FONTS : GRAPHIC_FONTS
+  // Restore warped text back to a plain IText
+  function handleRestoreText() {
+    const fabric = window.fabric
+    const obj = canvas?.getActiveObject()
+    if (!fabric || !obj?._warpSource) return
+    const src = obj._warpSource
+    const restored = new fabric.IText(src.text, {
+      left:       src.left,
+      top:        src.top,
+      fontFamily: src.fontFamily,
+      fontSize:   src.fontSize,
+      fill:       src.fill,
+      fontWeight: src.fontWeight || 'normal',
+      fontStyle:  src.fontStyle  || 'normal',
+      originX:    'center',
+      originY:    'center',
+    })
+    canvas.remove(obj)
+    canvas.add(restored)
+    canvas.setActiveObject(restored)
+    canvas.renderAll()
+    saveState(canvas)
+  }
 
-  const showEditor = isTextSelected && selectedObject
+  const isWarped = !!(selectedObject?._isWarpedText)
+  const fonts = fontTab === 'simple' ? SIMPLE_FONTS : GRAPHIC_FONTS
 
   return (
     <div className="panel-content text-editor-panel">
@@ -239,36 +325,16 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
         />
       ) : (
         <>
-          {selectedObject?._isWarpedText && (
+          {/* Banner shown when the selected object is a warped image */}
+          {isWarped && (
             <div className="warp-edit-banner">
-              <span>✏ Text is warped</span>
-              <button onClick={() => {
-                const fabric = window.fabric
-                const obj = canvas.getActiveObject()
-                if (fabric && obj?._warpSource) {
-                  const src = obj._warpSource
-                  const restored = new fabric.IText(src.text, {
-                    left: src.left,
-                    top: src.top,
-                    fontFamily: src.fontFamily,
-                    fontSize: src.fontSize,
-                    fill: src.fill,
-                    fontWeight: src.fontWeight || 'normal',
-                    fontStyle: src.fontStyle || 'normal',
-                    originX: 'center',
-                    originY: 'center',
-                  })
-                  canvas.remove(obj)
-                  canvas.add(restored)
-                  canvas.setActiveObject(restored)
-                  canvas.renderAll()
-                  saveState(canvas)
-                }
-              }}>
-                Edit Original Text
+              <span>✏ Text is warped — editing live</span>
+              <button onClick={handleRestoreText}>
+                Remove Warp
               </button>
             </div>
           )}
+
           <div className="text-input-section">
             <textarea
               className="text-input"
@@ -285,46 +351,50 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
                 <strong>B</strong>
               </button>
               <button
-                className={`style-icon ${fontWeight === 'italic' ? 'active' : ''}`}
+                className={`style-icon ${fontStyle === 'italic' ? 'active' : ''}`}
                 onClick={toggleItalic}
                 title="Italic"
               >
                 <em>I</em>
               </button>
-              <button
-                className={`style-icon ${underline ? 'active' : ''}`}
-                onClick={toggleUnderline}
-                title="Underline"
-              >
-                <span style={{ textDecoration: 'underline' }}>U</span>
-              </button>
-              <button
-                className={`style-icon ${textAlign === 'left' ? 'active' : ''}`}
-                onClick={() => handleAlignChange('left')}
-                title="Align Left"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/>
-                </svg>
-              </button>
-              <button
-                className={`style-icon ${textAlign === 'center' ? 'active' : ''}`}
-                onClick={() => handleAlignChange('center')}
-                title="Align Center"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
-                </svg>
-              </button>
-              <button
-                className={`style-icon ${textAlign === 'right' ? 'active' : ''}`}
-                onClick={() => handleAlignChange('right')}
-                title="Align Right"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/>
-                </svg>
-              </button>
+              {!isWarped && (
+                <>
+                  <button
+                    className={`style-icon ${underline ? 'active' : ''}`}
+                    onClick={toggleUnderline}
+                    title="Underline"
+                  >
+                    <span style={{ textDecoration: 'underline' }}>U</span>
+                  </button>
+                  <button
+                    className={`style-icon ${textAlign === 'left' ? 'active' : ''}`}
+                    onClick={() => handleAlignChange('left')}
+                    title="Align Left"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="18" y2="18"/>
+                    </svg>
+                  </button>
+                  <button
+                    className={`style-icon ${textAlign === 'center' ? 'active' : ''}`}
+                    onClick={() => handleAlignChange('center')}
+                    title="Align Center"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="3" y1="6" x2="21" y2="6"/><line x1="6" y1="12" x2="18" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+                    </svg>
+                  </button>
+                  <button
+                    className={`style-icon ${textAlign === 'right' ? 'active' : ''}`}
+                    onClick={() => handleAlignChange('right')}
+                    title="Align Right"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="3" y1="6" x2="21" y2="6"/><line x1="9" y1="12" x2="21" y2="12"/><line x1="6" y1="18" x2="21" y2="18"/>
+                    </svg>
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
@@ -344,7 +414,7 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
           </div>
 
           <div className="control-row">
-            <span className="control-label">Fonts</span>
+            <span className="control-label">Font</span>
             <select
               className="font-select"
               value={fontFamily}
@@ -358,7 +428,7 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
             </select>
           </div>
 
-          {fontTab === 'graphic' && (
+          {fontTab === 'graphic' && !isWarped && (
             <TextEffectPicker
               selectedObject={selectedObject}
               canvas={canvas}
@@ -409,15 +479,11 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
             className="control-row clickable"
             onClick={() => setShowWarpPanel(true)}
           >
-            <span className="control-label">Effects</span>
+            <span className="control-label">Warp Effect</span>
             <span className="control-value">
-              {
-                canvas?.getActiveObject()?._warpSource?.warpId
-                  ? WARP_PRESETS.find(
-                      p => p.id === canvas.getActiveObject()._warpSource.warpId
-                    )?.label
-                  : 'Plain Text'
-              }
+              {canvas?.getActiveObject()?._warpSource?.warpId
+                ? WARP_PRESETS.find(p => p.id === canvas.getActiveObject()._warpSource.warpId)?.label
+                : 'Plain Text'}
             </span>
           </div>
 
@@ -446,7 +512,6 @@ export default function TextEditorPanel({ canvas, selectedObject, isTextSelected
           <button
             className="action-btn action-btn--danger"
             onClick={onDelete}
-
           >
             Delete Text
           </button>

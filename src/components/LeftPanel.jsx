@@ -25,20 +25,23 @@ export default function LeftPanel({
       const obj = e.selected?.[0] || canvas.getActiveObject()
       if (obj) {
         setSelectedObject(obj)
-        const isImg = obj.type === 'image'
-        // treat warped text paths as text so the text panel stays open
-        const isTxt = obj.type === 'i-text' || obj.type === 'text' || obj._isWarpedText === true
+        // Warped text is a fabric.Image but must be treated as text, not an image
+        const isWarpedText = obj._isWarpedText === true
+        const isImg = obj.type === 'image' && !isWarpedText
+        const isTxt = obj.type === 'i-text' || obj.type === 'text' || isWarpedText
         const isRect = obj.type === 'rect'
         const isCircle = obj.type === 'circle'
         const isTri = obj.type === 'triangle'
         const isLine = obj.type === 'line'
         const isShapeType = isRect || isCircle || isTri || isLine
-        
+
         setIsImage(isImg)
         setIsText(isTxt)
         setIsShape(isShapeType)
 
-        if (isImg) {
+        if (isWarpedText) {
+          onViewChange('text')
+        } else if (isImg) {
           setImageSelected(true)
           onViewChange('upload')
         } else if (isTxt) {
