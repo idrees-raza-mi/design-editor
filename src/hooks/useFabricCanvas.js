@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { fabric } from 'fabric'
-import { constrainToBounds } from '../utils/canvasBounds'
 import { useUndoRedo } from './useUndoRedo'
 
 export function useFabricCanvas(canvasElementRef, { width, height } = {}) {
@@ -15,11 +14,11 @@ export function useFabricCanvas(canvasElementRef, { width, height } = {}) {
       width: width ?? 600,
       height: height ?? 500,
       backgroundColor: '#ffffff',
-      selection: true
+      selection: true,
+      preserveObjectStacking: true
     })
 
     fabricRef.current = fc
-    constrainToBounds(fc)
 
     function onKeyDown(e) {
       const tag = e.target.tagName.toLowerCase()
@@ -49,7 +48,6 @@ export function useFabricCanvas(canvasElementRef, { width, height } = {}) {
       window.removeEventListener('keydown', onKeyDown)
       fc.dispose()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return { canvas, canvasRef: canvasElementRef, saveState, undo, redo, canUndo, canRedo }

@@ -9,7 +9,6 @@ export function useUndoRedo() {
   const currentIndexRef = useRef(-1)
   const canvasRef = useRef(null)
 
-  // Keep ref in sync with state so callbacks always see the latest value
   function updateIndex(next) {
     currentIndexRef.current = next
     setCurrentIndex(next)
