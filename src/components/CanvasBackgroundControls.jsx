@@ -33,6 +33,18 @@ export default function CanvasBackgroundControls({ canvas, saveState, defaultCol
   const popupRef = useRef(null)
 
   useEffect(() => {
+    function handleClickOutside(e) {
+      if (popupRef.current && !popupRef.current.contains(e.target) && !e.target.closest('.canvas-bg-btn')) {
+        onTogglePicker()
+      }
+    }
+    if (showPicker) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showPicker, onTogglePicker])
+
+  useEffect(() => {
     if (showPicker && onCloseOther) {
       onCloseOther()
     }
