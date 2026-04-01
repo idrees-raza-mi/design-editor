@@ -30,30 +30,42 @@ export async function removeBackground(canvas, fabricImage, onStart, onDone, onE
   try {
     onStart()
     const src = fabricImage.getSrc()
+    
+    let blob
+    if (src.startsWith('data:')) {
+      const base64Response = await fetch(src)
+      blob = await base64Response.blob()
+    } else if (src.startsWith('blob:')) {
+      const response = await fetch(src)
+      blob = await response.blob()
+    } else {
+      const response = await fetch(src)
+      blob = await response.blob()
+    }
 
-    // Fetch src as blob regardless of whether it is a blob URL or data URL
-    const response = await fetch(src)
-    const inputBlob = await response.blob()
+    const formData = new FormData()
+    formData.append('file', blob, 'image.png')
+    
+    const apiResponse = await fetch('http://127.0.0.1:8080/remove-bg', {
+      method: 'POST',
+      body: formData
+    })
 
-    // Dynamic import via CDN keeps WASM models out of the main IIFE bundle.
-    // /* @vite-ignore */ prevents Vite from trying to bundle this at build time.
-    const { removeBackground: removeBg } = await import(
-      /* @vite-ignore */
-      'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/dist/browser/index.mjs'
-    )
-    const resultBlob = await removeBg(inputBlob)
+    if (!apiResponse.ok) {
+      const errorText = await apiResponse.text()
+      throw new Error(`API error ${apiResponse.status}: ${errorText}`)
+    }
 
+    const resultBlob = await apiResponse.blob()
     const newUrl = URL.createObjectURL(resultBlob)
-    fabricImage.setSrc(
-      newUrl,
-      () => {
-        canvas.renderAll()
-        onDone()
-      },
-      { crossOrigin: 'anonymous' }
-    )
+    
+    fabricImage.setSrc(newUrl, () => {
+      canvas.renderAll()
+      onDone()
+    }, { crossOrigin: 'anonymous' })
   } catch (err) {
-    onError(err)
+    console.error('Background removal error:', err)
+    onError(err.message || 'Failed to remove background')
   }
 }
 
