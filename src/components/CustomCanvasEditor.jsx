@@ -28,8 +28,18 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
   const [zoomLevel, setZoomLevel] = useState(100)
   const [selectedSize, setSelectedSize] = useState(null)
   const [previousView, setPreviousView] = useState(null)
+  const [showBgColorPicker, setShowBgColorPicker] = useState(false)
+  const [showLayers, setShowLayers] = useState(false)
   const undoRef = useRef(null)
   const saveFnRef = useRef(null)
+
+  function handleCloseBgColorPicker() {
+    setShowBgColorPicker(false)
+  }
+
+  function handleCloseLayers() {
+    setShowLayers(false)
+  }
 
   const currentSize = selectedSize || design.availableSizes?.find(s => s.label === design.sizeLabel) || design.availableSizes?.[0]
   const canvasWidth = currentSize?.width || design.canvasWidth
@@ -196,8 +206,26 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
           saveState={(c) => saveFnRef.current?.(c)}
         />
 
-        <CanvasBackgroundControls canvas={canvas} saveState={(c) => saveFnRef.current?.(c)} defaultColor={design.backgroundColor} />
-        <LayersControls canvas={canvas} />
+        <CanvasBackgroundControls 
+          canvas={canvas} 
+          saveState={(c) => saveFnRef.current?.(c)} 
+          defaultColor={design.backgroundColor}
+          showPicker={showBgColorPicker}
+          onTogglePicker={() => {
+            setShowBgColorPicker(!showBgColorPicker)
+            setShowLayers(false)
+          }}
+          onCloseOther={handleCloseLayers}
+        />
+        <LayersControls 
+          canvas={canvas} 
+          showPanel={showLayers}
+          onTogglePanel={() => {
+            setShowLayers(!showLayers)
+            setShowBgColorPicker(false)
+          }}
+          onCloseOther={handleCloseBgColorPicker}
+        />
 
         <main className="canvas-area">
           <div className="canvas-wrapper">

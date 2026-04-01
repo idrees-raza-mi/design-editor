@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const LAYER_ICONS = {
   'i-text': 'T',
@@ -9,9 +9,28 @@ const LAYER_ICONS = {
   'default': '◉'
 }
 
-export default function LayersControls({ canvas, onLayersChange }) {
+export default function LayersControls({ canvas, onLayersChange, showPanel, onTogglePanel, onCloseOther }) {
   const [showLayers, setShowLayers] = useState(false)
   const [layers, setLayers] = useState([])
+  const popupRef = useRef(null)
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (popupRef.current && !popupRef.current.contains(e.target)) {
+        onTogglePanel()
+      }
+    }
+    if (showPanel) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showPanel, onTogglePanel])
+
+  useEffect(() => {
+    if (showPanel && onCloseOther) {
+      onCloseOther()
+    }
+  }, [showPanel, onCloseOther])
 
   function refreshLayers() {
     if (!canvas) return
@@ -29,30 +48,30 @@ export default function LayersControls({ canvas, onLayersChange }) {
   useEffect(() => {
     if (!canvas) return
     
-    if (showLayers) {
+    if (showPanel) {
       refreshLayers()
     }
 
     const handleObjectAdded = () => {
-      if (showLayers) {
+      if (showPanel) {
         refreshLayers()
       }
     }
 
     const handleObjectRemoved = () => {
-      if (showLayers) {
+      if (showPanel) {
         refreshLayers()
       }
     }
 
     const handleSelectionCreated = () => {
-      if (showLayers) {
+      if (showPanel) {
         refreshLayers()
       }
     }
 
     const handleSelectionUpdated = () => {
-      if (showLayers) {
+      if (showPanel) {
         refreshLayers()
       }
     }
@@ -68,13 +87,13 @@ export default function LayersControls({ canvas, onLayersChange }) {
       canvas.off('selection:created', handleSelectionCreated)
       canvas.off('selection:updated', handleSelectionUpdated)
     }
-  }, [canvas, showLayers])
+  }, [canvas, showPanel])
 
   function toggleLayersPanel() {
-    if (!showLayers) {
+    if (!showPanel) {
       refreshLayers()
     }
-    setShowLayers(!showLayers)
+    onTogglePanel()
   }
 
   function handleLayerSelect(layer) {
@@ -125,7 +144,7 @@ export default function LayersControls({ canvas, onLayersChange }) {
   }
 
   return (
-    <div className="canvas-layers-controls">
+    <div className="canvas-layers-controls" ref={popupRef}>
       <button 
         className="canvas-layers-btn"
         onClick={toggleLayersPanel}
@@ -138,7 +157,7 @@ export default function LayersControls({ canvas, onLayersChange }) {
         </svg>
       </button>
       
-      {showLayers && (
+      {showPanel && (
         <div className="canvas-layers-popup">
           <div className="canvas-layers-header">
             <span>Layers ({layers.length})</span>

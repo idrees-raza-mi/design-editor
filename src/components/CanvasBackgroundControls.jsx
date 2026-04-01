@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 const PRESET_COLORS = [
   '#ffffff', '#000000', '#f0f0f0', '#e0e0e0', '#d0d0d0', '#c0c0c0',
@@ -26,11 +26,29 @@ function saveRecentColor(color) {
   } catch {}
 }
 
-export default function CanvasBackgroundControls({ canvas, saveState, defaultColor = '#ffffff' }) {
-  const [showColorPicker, setShowColorPicker] = useState(false)
+export default function CanvasBackgroundControls({ canvas, saveState, defaultColor = '#ffffff', showPicker, onTogglePicker, onCloseOther }) {
   const [currentBgColor, setCurrentBgColor] = useState(defaultColor)
   const [hexInput, setHexInput] = useState(defaultColor)
   const [tempColor, setTempColor] = useState(defaultColor)
+  const popupRef = useRef(null)
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (popupRef.current && !popupRef.current.contains(e.target)) {
+        onTogglePicker()
+      }
+    }
+    if (showPicker) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showPicker, onTogglePicker])
+
+  useEffect(() => {
+    if (showPicker && onCloseOther) {
+      onCloseOther()
+    }
+  }, [showPicker, onCloseOther])
 
   function handleColorChange(color) {
     setCurrentBgColor(color)
@@ -41,7 +59,7 @@ export default function CanvasBackgroundControls({ canvas, saveState, defaultCol
       saveState?.(canvas)
     }
     saveRecentColor(color)
-    setShowColorPicker(false)
+    onTogglePicker()
   }
 
   function handleHexSubmit(e) {
@@ -66,10 +84,10 @@ export default function CanvasBackgroundControls({ canvas, saveState, defaultCol
   const recentColors = getRecentColors()
 
   return (
-    <div className="canvas-bg-controls">
+    <div className="canvas-bg-controls" ref={popupRef}>
       <button 
         className="canvas-bg-btn"
-        onClick={() => setShowColorPicker(!showColorPicker)}
+        onClick={onTogglePicker}
         title="Background Color"
       >
         <div 
@@ -78,7 +96,7 @@ export default function CanvasBackgroundControls({ canvas, saveState, defaultCol
         />
       </button>
       
-      {showColorPicker && (
+      {showPicker && (
         <div className="canvas-bg-picker-popup">
           <div className="canvas-bg-picker-header">
             <div 
