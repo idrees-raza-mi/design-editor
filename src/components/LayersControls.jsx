@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const LAYER_ICONS = {
   'i-text': 'T',
@@ -25,6 +25,50 @@ export default function LayersControls({ canvas, onLayersChange }) {
     })).reverse()
     setLayers(objects)
   }
+
+  useEffect(() => {
+    if (!canvas) return
+    
+    if (showLayers) {
+      refreshLayers()
+    }
+
+    const handleObjectAdded = () => {
+      if (showLayers) {
+        refreshLayers()
+      }
+    }
+
+    const handleObjectRemoved = () => {
+      if (showLayers) {
+        refreshLayers()
+      }
+    }
+
+    const handleSelectionCreated = () => {
+      if (showLayers) {
+        refreshLayers()
+      }
+    }
+
+    const handleSelectionUpdated = () => {
+      if (showLayers) {
+        refreshLayers()
+      }
+    }
+
+    canvas.on('object:added', handleObjectAdded)
+    canvas.on('object:removed', handleObjectRemoved)
+    canvas.on('selection:created', handleSelectionCreated)
+    canvas.on('selection:updated', handleSelectionUpdated)
+
+    return () => {
+      canvas.off('object:added', handleObjectAdded)
+      canvas.off('object:removed', handleObjectRemoved)
+      canvas.off('selection:created', handleSelectionCreated)
+      canvas.off('selection:updated', handleSelectionUpdated)
+    }
+  }, [canvas, showLayers])
 
   function toggleLayersPanel() {
     if (!showLayers) {
@@ -97,7 +141,7 @@ export default function LayersControls({ canvas, onLayersChange }) {
       {showLayers && (
         <div className="canvas-layers-popup">
           <div className="canvas-layers-header">
-            <span>Layers</span>
+            <span>Layers ({layers.length})</span>
             <button className="canvas-layers-close" onClick={() => setShowLayers(false)}>×</button>
           </div>
           
