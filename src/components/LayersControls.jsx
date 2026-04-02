@@ -11,6 +11,8 @@ const LAYER_ICONS = {
 
 export default function LayersControls({ canvas, onLayersChange, showPanel, onTogglePanel, onCloseOther }) {
   const [layers, setLayers] = useState([])
+  const [draggedIndex, setDraggedIndex] = useState(null)
+  const [dragOverIndex, setDragOverIndex] = useState(null)
   const popupRef = useRef(null)
 
   useEffect(() => {
@@ -130,6 +132,62 @@ export default function LayersControls({ canvas, onLayersChange, showPanel, onTo
     onLayersChange?.()
   }
 
+  function handleDragStart(e, index) {
+    setDraggedIndex(index)
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
+  function handleDragOver(e, index) {
+    e.preventDefault()
+    e.stopPropagation()
+    if (draggedIndex !== null && draggedIndex !== index) {
+      setDragOverIndex(index)
+    }
+  }
+
+  function handleDragLeave(e) {
+    e.stopPropagation()
+  }
+
+  function handleDrop(e, dropIndex) {
+    e.preventDefault()
+    e.stopPropagation()
+    const dragIndex = draggedIndex
+    
+    if (dragIndex === null || dragIndex === dropIndex) {
+      setDraggedIndex(null)
+      setDragOverIndex(null)
+      return
+    }
+
+    const objects = canvas.getObjects()
+    const fromIdx = dragIndex
+    const toIdx = dropIndex
+    
+    const movedObject = objects[fromIdx]
+    
+    if (fromIdx < toIdx) {
+      for (let i = fromIdx; i < toIdx; i++) {
+        canvas.bringForward(movedObject)
+      }
+    } else {
+      for (let i = fromIdx; i > toIdx; i--) {
+        canvas.sendBackwards(movedObject)
+      }
+    }
+
+    canvas.renderAll()
+    refreshLayers()
+    onLayersChange?.()
+    setDraggedIndex(null)
+    setDragOverIndex(null)
+  }
+
+  function handleDragEnd() {
+    setDraggedIndex(null)
+    setDragOverIndex(null)
+  }
+
   return (
     <div className="canvas-layers-controls" ref={popupRef}>
       <button 
@@ -158,9 +216,23 @@ export default function LayersControls({ canvas, onLayersChange, showPanel, onTo
               {layers.map((layer, idx) => (
                 <div 
                   key={layer.id} 
-                  className="canvas-layer-item"
+                  className={`canvas-layer-item ${draggedIndex === idx ? 'dragging' : ''} ${dragOverIndex === idx ? 'drag-over' : ''}`}
                   onClick={() => handleLayerSelect(layer)}
                 >
+                  <div 
+                    className="canvas-layer-drag-handle"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, idx)}
+                    onDragOver={(e) => handleDragOver(e, idx)}
+                    onDrop={(e) => handleDrop(e, idx)}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <circle cx="9" cy="6" r="2"/><circle cx="15" cy="6" r="2"/>
+                      <circle cx="9" cy="12" r="2"/><circle cx="15" cy="12" r="2"/>
+                      <circle cx="9" cy="18" r="2"/><circle cx="15" cy="18" r="2"/>
+                    </svg>
+                  </div>
                   <div className="canvas-layer-icon">
                     {LAYER_ICONS[layer.type] || LAYER_ICONS.default}
                   </div>

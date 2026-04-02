@@ -458,6 +458,27 @@ body,
   background: var(--color-bg-hover);
 }
 
+.canvas-layer-item.dragging {
+  opacity: 0.5;
+  background: #e0e0e0;
+}
+
+.canvas-layer-item.drag-over {
+  border-top: 2px solid #8B7355;
+  margin-top: -1px;
+}
+
+.canvas-layer-drag-handle {
+  cursor: grab;
+  color: #999;
+  display: flex;
+  align-items: center;
+}
+
+.canvas-layer-drag-handle:active {
+  cursor: grabbing;
+}
+
 .canvas-layer-icon {
   width: 28px;
   height: 28px;
