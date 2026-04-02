@@ -135,23 +135,21 @@ export default function LayersControls({ canvas, onLayersChange, showPanel, onTo
   function handleDragStart(e, index) {
     setDraggedIndex(index)
     e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.setDragImage(e.currentTarget, 0, 20)
   }
 
   function handleDragOver(e, index) {
     e.preventDefault()
-    e.stopPropagation()
     if (draggedIndex !== null && draggedIndex !== index) {
       setDragOverIndex(index)
     }
   }
 
   function handleDragLeave(e) {
-    e.stopPropagation()
   }
 
   function handleDrop(e, dropIndex) {
     e.preventDefault()
-    e.stopPropagation()
     const dragIndex = draggedIndex
     
     if (dragIndex === null || dragIndex === dropIndex) {
@@ -166,12 +164,13 @@ export default function LayersControls({ canvas, onLayersChange, showPanel, onTo
     
     const movedObject = objects[fromIdx]
     
-    if (fromIdx < toIdx) {
-      for (let i = fromIdx; i < toIdx; i++) {
+    const diff = toIdx - fromIdx
+    if (diff > 0) {
+      for (let i = 0; i < diff; i++) {
         canvas.bringForward(movedObject)
       }
     } else {
-      for (let i = fromIdx; i > toIdx; i--) {
+      for (let i = 0; i < Math.abs(diff); i++) {
         canvas.sendBackwards(movedObject)
       }
     }
