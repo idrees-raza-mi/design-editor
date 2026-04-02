@@ -57,13 +57,14 @@ body,
 #design-editor {
   height: 100%;
   width: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
   font-family: system-ui, -apple-system, sans-serif;
 }
 
 /* ========================================
-   Editor Container
-   ======================================== */
+    Editor Container
+    ======================================== */
 
 .editor-container {
   display: flex;
@@ -244,10 +245,10 @@ body,
 }
 
 .canvas-zoom-controls {
-      position: absolute;
-        bottom: -20px;
-        left: 19vw;
-        z-index: 10;
+  position: absolute;
+  bottom: -20px;
+  left: 19vw;
+  z-index: 10;
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid var(--color-border);
   border-radius: 8px;
@@ -364,7 +365,7 @@ body,
   position: relative;
 }
 
-.editor-main > .canvas-bg-controls {
+.editor-main>.canvas-bg-controls {
   position: absolute;
   top: 40px;
   right: 40px;
@@ -373,7 +374,7 @@ body,
   gap: 4px;
 }
 
-.editor-main > .canvas-layers-controls {
+.editor-main>.canvas-layers-controls {
   position: absolute;
   top: 80px;
   right: 40px;
@@ -395,7 +396,7 @@ body,
 }
 
 .canvas-layers-btn:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .canvas-layers-btn svg {
@@ -461,7 +462,7 @@ body,
 .canvas-layer-item.dragging {
   opacity: 0.6;
   background: #e8e8e8;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transform: scale(1.02);
   z-index: 100;
   position: relative;
@@ -484,7 +485,7 @@ body,
 
 .canvas-layer-drag-handle:hover {
   color: #666;
-  background: rgba(0,0,0,0.05);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .canvas-layer-drag-handle:active {
@@ -1267,7 +1268,7 @@ body,
 }
 
 .canvas-bg-btn:hover {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .canvas-bg-color-preview {
@@ -2195,96 +2196,96 @@ body,
 }
 
 .action-btn {
-    width: calc(100% - 24px);
-    margin: 0 12px 8px;
-    padding: 10px 16px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
+  width: calc(100% - 24px);
+  margin: 0 12px 8px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
 
-  .action-btn--primary {
-    background: var(--color-accent);
-    color: white;
-    border: none;
-  }
+.action-btn--primary {
+  background: var(--color-accent);
+  color: white;
+  border: none;
+}
 
-  .action-btn--primary:hover {
-    background: var(--color-accent-hover);
-  }
+.action-btn--primary:hover {
+  background: var(--color-accent-hover);
+}
 
-  .action-btn--primary:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
+.action-btn--primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
-  .action-btn--danger {
-    background: white;
-    color: var(--color-error);
-    border: 1px solid var(--color-error);
-  }
+.action-btn--danger {
+  background: white;
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+}
 
-  .action-btn--danger:hover {
-    opacity: 0.8;
-  }
+.action-btn--danger:hover {
+  opacity: 0.8;
+}
 
-  .font-select {
-    flex: 1;
-    padding: 8px 12px;
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
-    font-size: 13px;
-    background: white;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    padding-right: 30px;
-    transition: all 0.15s;
-  }
+.font-select {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 13px;
+  background: white;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+  transition: all 0.15s;
+}
 
-  .font-select:hover {
-    border-color: var(--color-text-secondary);
-  }
+.font-select:hover {
+  border-color: var(--color-text-secondary);
+}
 
-  .font-select:focus {
-    outline: none;
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1);
-  }
+.font-select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1);
+}
 
-  .font-select option {
-    padding: 8px;
-    font-size: 13px;
-  }
+.font-select option {
+  padding: 8px;
+  font-size: 13px;
+}
 
-  .no-selection {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
-    text-align: center;
-    color: var(--color-text-muted);
-    min-height: 200px;
-  }
+.no-selection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--color-text-muted);
+  min-height: 200px;
+}
 
-  .no-selection svg {
-    width: 48px;
-    height: 48px;
-    stroke: #ccc;
-    margin-bottom: 16px;
-  }
+.no-selection svg {
+  width: 48px;
+  height: 48px;
+  stroke: #ccc;
+  margin-bottom: 16px;
+}
 
-  .no-selection p {
-    font-size: 14px;
-    line-height: 1.5;
-    margin: 0;
-    max-width: 180px;
-  }
+.no-selection p {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 180px;
+}
 
 .text-effects-section {
   padding: 12px;
@@ -2541,8 +2542,15 @@ body,
 }
 
 @keyframes warpPulse {
-  0%, 100% { opacity: 0.35; }
-  50% { opacity: 0.7; }
+
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .warp-preview-loading {
