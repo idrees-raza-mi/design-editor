@@ -232,9 +232,14 @@ export default function TextControls({ canvas, selectedObject, saveState, permis
       </div>
 
       <div className="prop-section">
-        <button className="prop-delete-btn" onClick={handleDelete}>
-          Delete Text
-        </button>
+        <LockedControl
+          locked={permissions?.delete === 'no'}
+          tooltip="This element cannot be deleted"
+        >
+          <button className="prop-delete-btn" onClick={handleDelete}>
+            Delete Text
+          </button>
+        </LockedControl>
       </div>
     </>
   )

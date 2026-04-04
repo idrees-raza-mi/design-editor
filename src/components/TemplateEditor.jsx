@@ -7,7 +7,7 @@ import SavingOverlay from './SavingOverlay'
 import SuccessOverlay from './SuccessOverlay'
 import PropertiesPanel from './PropertiesPanel'
 import TemplateFieldsDropdown from './TemplateFieldsDropdown'
-import { loadTemplate, getObjectById } from '../utils/templateLoader'
+import { loadTemplate } from '../utils/templateLoader'
 import { getConfig } from '../config/editorConfig'
 import { saveDesign, SAVE_STEPS_CONFIG } from '../utils/shopifyDesign'
 import { addToCart } from '../hooks/useShopifyCart'
@@ -134,18 +134,26 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
 
       <div className="editor-main">
 
-        {/* Left panel — minimal, just context notice */}
-        <aside className="left-panel">
-          <div className="panel-content" style={{ padding: '12px' }}>
-            <div className="template-notice">
-              Fixed elements cannot be moved or edited. Use the Fields panel on the right to customise editable fields.
-            </div>
-            {editableObjects.length > 0 && (
-              <div className="template-progress">
-                {completedCount} / {editableObjects.length} fields completed
-              </div>
-            )}
+        {/* Left panel — fields dropdown + edit controls */}
+        <aside className="template-right-panel">
+          <div className="template-notice" style={{ margin: '12px 12px 0' }}>
+            Fixed elements cannot be moved or edited.
           </div>
+          {editableObjects.length > 0 && (
+            <div className="template-progress">
+              {completedCount} / {editableObjects.length} fields completed
+            </div>
+          )}
+
+          <TemplateFieldsDropdown
+            editableObjects={editableObjects}
+            canvas={canvas}
+          />
+
+          <PropertiesPanel
+            canvas={canvas}
+            saveState={saveState}
+          />
         </aside>
 
         {/* Canvas */}
@@ -176,20 +184,6 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
           </div>
         </main>
 
-        {/* Right panel — fields dropdown + full edit controls */}
-        <aside className="template-right-panel">
-          {/* Fields picker — always visible */}
-          <TemplateFieldsDropdown
-            editableObjects={editableObjects}
-            canvas={canvas}
-          />
-
-          {/* Full properties panel — shows when something is selected */}
-          <PropertiesPanel
-            canvas={canvas}
-            saveState={saveState}
-          />
-        </aside>
 
       </div>
 

@@ -1763,10 +1763,11 @@ body,
 .template-right-panel {
   width: var(--left-panel-width);
   background: var(--color-bg-panel);
-  border-left: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   flex-shrink: 0;
 }
 
