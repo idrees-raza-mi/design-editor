@@ -1,11 +1,12 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import TopBar from './TopBar'
-import LeftPanel from './LeftPanel'
 import BottomBar from './BottomBar'
 import DimensionOverlay from './DimensionOverlay'
 import DesignCanvas from './DesignCanvas'
 import SavingOverlay from './SavingOverlay'
 import SuccessOverlay from './SuccessOverlay'
+import PropertiesPanel from './PropertiesPanel'
+import TemplateFieldsDropdown from './TemplateFieldsDropdown'
 import { loadTemplate, getObjectById } from '../utils/templateLoader'
 import { getConfig } from '../config/editorConfig'
 import { saveDesign, SAVE_STEPS_CONFIG } from '../utils/shopifyDesign'
@@ -18,12 +19,10 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
   const [savingSteps, setSavingSteps] = useState([])
   const [saveError, setSaveError] = useState(null)
   const [editableObjects, setEditableObjects] = useState([])
-  const [selectedFieldId, setSelectedFieldId] = useState(null)
   const [tooltipVisible, setTooltipVisible] = useState(false)
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 })
   const [successVisible, setSuccessVisible] = useState(false)
   const [savedThumbnailUrl, setSavedThumbnailUrl] = useState('')
-  const [leftPanelView, setLeftPanelView] = useState('menu')
   const [activeTab, setActiveTab] = useState('create')
   const [selectedSize, setSelectedSize] = useState(null)
   const saveFnRef = useRef(null)
@@ -32,11 +31,23 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
   const canvasWidth = currentSize?.width || design.canvasWidth
   const canvasHeight = currentSize?.height || design.canvasHeight
 
-  async function handleCanvasReady({ canvas: fc, saveState }) {
+  // Wrap saveState so PropertiesPanel can call it as saveState(canvas)
+  const saveState = useCallback((c) => saveFnRef.current?.(c), [])
+
+  function markCompletion(fabricObj) {
+    setEditableObjects(prev => prev.map(o =>
+      o.fabricObj === fabricObj
+        ? { ...o, completed: !!(fabricObj.text?.trim()) || fabricObj.__imageReplaced === true }
+        : o
+    ))
+  }
+
+  async function handleCanvasReady({ canvas: fc, saveState: save }) {
     setCanvas(fc)
-    saveFnRef.current = saveState
+    saveFnRef.current = save
     window.__fabricCanvas = fc
 
+    // Show tooltip when user clicks a fixed (non-editable) element
     fc.on('mouse:down', (e) => {
       if (e.target && e.target.__permissions?.content === 'fixed') {
         setTooltipPos({ x: e.pointer.x, y: e.pointer.y })
@@ -45,53 +56,29 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
       }
     })
 
+    // Update completion state when text is typed directly on canvas
+    fc.on('text:changed', (e) => {
+      if (e.target) markCompletion(e.target)
+    })
+
+    // Update completion state when object is modified via PropertiesPanel
+    fc.on('object:modified', (e) => {
+      if (e.target) markCompletion(e.target)
+    })
+
     if (design.templateJSON) {
       const { editableObjects: editables } = await loadTemplate(fc, design.templateJSON)
 
       const objs = editables.map((obj) => ({
         id: obj.id,
         type: obj.type === 'i-text' || obj.type === 'text' ? 'text' : obj.type,
-        label: obj.label || obj.type,
+        label: obj.label || obj.id || obj.type,
         required: obj.required || false,
         fabricObj: obj,
         completed: false
       }))
       setEditableObjects(objs)
-      setLeftPanelView('text')
     }
-  }
-
-  function handleTextChange(objId, newText) {
-    const obj = getObjectById(canvas, objId)
-    if (obj) {
-      obj.set('text', newText)
-      canvas.renderAll()
-      saveFnRef.current?.(canvas)
-      setEditableObjects((prev) =>
-        prev.map((o) => (o.id === objId ? { ...o, completed: !!newText } : o))
-      )
-    }
-  }
-
-  function handleImageReplace(objId, file) {
-    const obj = getObjectById(canvas, objId)
-    if (!obj || !file) return
-
-    const newUrl = URL.createObjectURL(file)
-    const left = obj.left
-    const top = obj.top
-    const scaleX = obj.scaleX
-    const scaleY = obj.scaleY
-    const angle = obj.angle
-
-    obj.setSrc(newUrl, () => {
-      obj.set({ left, top, scaleX, scaleY, angle })
-      canvas.renderAll()
-      saveFnRef.current?.(canvas)
-      setEditableObjects((prev) =>
-        prev.map((o) => (o.id === objId ? { ...o, completed: true } : o))
-      )
-    }, { crossOrigin: 'anonymous' })
   }
 
   async function handleProcess() {
@@ -118,7 +105,6 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
         updateStep
       )
 
-      setSaving(true)
       try {
         await addToCart(designId, thumbnailUrl, printFileUrl)
         setOverlayVisible(false)
@@ -135,98 +121,34 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
     }
   }
 
-  const completedCount = editableObjects.filter((o) => o.completed).length
-  const requiredCount = editableObjects.filter((o) => o.required).length
-  const requiredCompleted = editableObjects.filter((o) => o.required && o.completed).length
+  const completedCount = editableObjects.filter(o => o.completed).length
 
   return (
     <div className="editor-container">
       <TopBar
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        showBackButton={leftPanelView !== 'menu'}
-        onBack={() => setLeftPanelView('menu')}
+        showBackButton={false}
         editorTitle={editorTitle}
       />
 
       <div className="editor-main">
-        <aside className="left-panel">
-          <div className="panel-content">
-            <div className="template-notice">
-              Fixed elements cannot be moved. Edit the fields below.
-            </div>
 
+        {/* Left panel — minimal, just context notice */}
+        <aside className="left-panel">
+          <div className="panel-content" style={{ padding: '12px' }}>
+            <div className="template-notice">
+              Fixed elements cannot be moved or edited. Use the Fields panel on the right to customise editable fields.
+            </div>
             {editableObjects.length > 0 && (
               <div className="template-progress">
-                {completedCount} of {editableObjects.length} fields completed
-                {requiredCount > 0 && (
-                  <span style={{ color: requiredCompleted < requiredCount ? '#dc2626' : '#16a34a', marginLeft: 6 }}>
-                    ({requiredCompleted}/{requiredCount} required)
-                  </span>
-                )}
+                {completedCount} / {editableObjects.length} fields completed
               </div>
             )}
-
-            <div className="template-fields-list">
-              {editableObjects.length === 0 && design.templateJSON === null && (
-                <div className="template-no-data">
-                  No template loaded. Add template_json to your Shopify Metaobject.
-                </div>
-              )}
-
-              {editableObjects.map((obj) => (
-                <div
-                  key={obj.id}
-                  className={`template-field-card${selectedFieldId === obj.id ? ' template-field-card--selected' : ''}${obj.completed ? ' template-field-card--completed' : ''}`}
-                  onClick={() => setSelectedFieldId(obj.id)}
-                >
-                  <div className="template-field-header">
-                    <span className="template-field-type">
-                      {obj.type === 'text' ? 'T' : '🖼'}
-                    </span>
-                    <span className="template-field-label">{obj.label}</span>
-                    {obj.required && (
-                      <span
-                        style={{ color: '#dc2626', fontWeight: 'bold', marginLeft: 4 }}
-                        title="Required field"
-                      >
-                        *
-                      </span>
-                    )}
-                    {obj.completed && <span className="template-field-check">✓</span>}
-                  </div>
-
-                  {selectedFieldId === obj.id && obj.type === 'text' && (
-                    <div className="template-field-editor">
-                      <textarea
-                        className="text-content-area"
-                        value={obj.fabricObj.text || ''}
-                        onChange={(e) => handleTextChange(obj.id, e.target.value)}
-                        placeholder={`Enter ${obj.label}...`}
-                      />
-                    </div>
-                  )}
-
-                  {selectedFieldId === obj.id && obj.type === 'image' && (
-                    <div className="template-field-editor">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        id={`img-replace-${obj.id}`}
-                        style={{ display: 'none' }}
-                        onChange={(e) => handleImageReplace(obj.id, e.target.files[0])}
-                      />
-                      <label htmlFor={`img-replace-${obj.id}`} className="template-replace-btn">
-                        Replace Photo
-                      </label>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
           </div>
         </aside>
 
+        {/* Canvas */}
         <main className="canvas-area">
           <div className="canvas-wrapper">
             <DesignCanvas
@@ -244,12 +166,31 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
               />
             )}
             {tooltipVisible && (
-              <div className="template-tooltip" style={{ left: tooltipPos.x + 10, top: tooltipPos.y + 10 }}>
+              <div
+                className="template-tooltip"
+                style={{ left: tooltipPos.x + 10, top: tooltipPos.y + 10 }}
+              >
                 This element is part of the template design
               </div>
             )}
           </div>
         </main>
+
+        {/* Right panel — fields dropdown + full edit controls */}
+        <aside className="template-right-panel">
+          {/* Fields picker — always visible */}
+          <TemplateFieldsDropdown
+            editableObjects={editableObjects}
+            canvas={canvas}
+          />
+
+          {/* Full properties panel — shows when something is selected */}
+          <PropertiesPanel
+            canvas={canvas}
+            saveState={saveState}
+          />
+        </aside>
+
       </div>
 
       <BottomBar
@@ -257,7 +198,7 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
         price={selectedSize?.price || design.availableSizes?.[0]?.price || null}
         onProcess={handleProcess}
         saving={saving}
-        design={{...design, sizeLabel: selectedSize?.label || design.sizeLabel}}
+        design={{ ...design, sizeLabel: selectedSize?.label || design.sizeLabel }}
         onSizeChange={setSelectedSize}
       />
 

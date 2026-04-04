@@ -1757,6 +1757,453 @@ body,
 }
 
 /* ========================================
+   Template Right Panel
+   ======================================== */
+
+.template-right-panel {
+  width: var(--left-panel-width);
+  background: var(--color-bg-panel);
+  border-left: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* ========================================
+   Properties Panel (right panel in template mode)
+   ======================================== */
+
+.properties-panel {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 16px;
+}
+
+.properties-empty {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  padding: 16px 14px;
+  line-height: 1.5;
+}
+
+.panel-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  padding: 14px 14px 6px;
+}
+
+.prop-section {
+  padding: 10px 14px 4px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.prop-section:last-child {
+  border-bottom: none;
+}
+
+.prop-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.prop-value {
+  font-weight: 400;
+  color: var(--color-text-primary);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.prop-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.prop-label {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  width: 18px;
+  flex-shrink: 0;
+}
+
+.prop-number {
+  width: 64px;
+  padding: 5px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 12px;
+  background: var(--color-bg-input, #fff);
+  color: var(--color-text-primary);
+}
+
+.prop-number:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.prop-slider {
+  width: 100%;
+  margin: 4px 0 8px;
+  accent-color: var(--color-accent);
+}
+
+.prop-info {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+}
+
+.prop-warning {
+  font-size: 11px;
+  color: #e65100;
+  background: #fff3e0;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-top: 4px;
+}
+
+.prop-error {
+  font-size: 11px;
+  color: #c62828;
+  margin-top: 4px;
+}
+
+.prop-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: white;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  margin-bottom: 6px;
+}
+
+.prop-action-btn:hover {
+  background: var(--color-bg-hover, #f5f5f5);
+  border-color: var(--color-border-hover);
+}
+
+.prop-action-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.prop-delete-btn {
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid #ef4444;
+  border-radius: 4px;
+  background: white;
+  color: #ef4444;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.prop-delete-btn:hover {
+  background: #fef2f2;
+}
+
+.btn-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #ccc;
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* Filter buttons */
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.filter-btn {
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: white;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.filter-btn:hover {
+  background: var(--color-bg-hover, #f5f5f5);
+}
+
+.filter-btn--active {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+
+/* Font picker */
+.font-picker {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 12px;
+  background: white;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  margin-bottom: 4px;
+}
+
+.font-picker:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+/* Text color picker */
+.text-color-picker {
+  width: 32px;
+  height: 28px;
+  padding: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  cursor: pointer;
+  background: none;
+  flex-shrink: 0;
+}
+
+/* Text style buttons (B / I / U) */
+.text-style-buttons {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.text-style-btn {
+  width: 30px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: white;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.text-style-btn:hover {
+  background: var(--color-bg-hover, #f5f5f5);
+}
+
+.text-style-btn--active {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+
+/* Text content area (used in PropertiesPanel + TextControls) */
+.text-content-area {
+  width: 100%;
+  padding: 7px 9px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 12px;
+  resize: vertical;
+  background: white;
+  color: var(--color-text-primary);
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.text-content-area:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+/* ========================================
+   Template Fields Dropdown (tfd)
+   ======================================== */
+
+.tfd-wrap {
+  position: relative;
+  padding: 10px 12px 6px;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.tfd-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  text-align: left;
+}
+
+.tfd-btn:hover {
+  border-color: var(--color-border-hover);
+  background: var(--color-bg-hover, #f9f9f9);
+}
+
+.tfd-btn--done {
+  border-color: var(--color-success, #22c55e);
+  background: #f0fdf4;
+}
+
+.tfd-btn-label {
+  flex: 1;
+}
+
+.tfd-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-hover, #ebebeb);
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.tfd-badge--done {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.tfd-required-badge {
+  background: #fef2f2;
+  color: #dc2626;
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-size: 10px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.tfd-chevron {
+  flex-shrink: 0;
+  transition: transform 0.18s;
+  color: var(--color-text-secondary);
+}
+
+.tfd-chevron--open {
+  transform: rotate(180deg);
+}
+
+.tfd-menu {
+  position: absolute;
+  top: calc(100% - 4px);
+  left: 12px;
+  right: 12px;
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  z-index: 200;
+  overflow: hidden;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.tfd-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--color-text-primary);
+  transition: background 0.12s;
+}
+
+.tfd-item:last-child {
+  border-bottom: none;
+}
+
+.tfd-item:hover {
+  background: var(--color-bg-hover, #f5f5f5);
+}
+
+.tfd-item--done {
+  background: #f0fdf4;
+}
+
+.tfd-item-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-hover, #ebebeb);
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.tfd-item-label {
+  flex: 1;
+  font-weight: 500;
+}
+
+.tfd-required-star {
+  color: #dc2626;
+  font-weight: 700;
+  margin-left: 2px;
+}
+
+.tfd-item-check {
+  color: #15803d;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.tfd-item-empty {
+  color: #d1d5db;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+/* ========================================
    Overlays (Saving, Success)
    ======================================== */
 

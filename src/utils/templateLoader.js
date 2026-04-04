@@ -40,12 +40,13 @@ export function loadTemplate(canvas, templateJSON) {
         // The admin tool always exports positions as the visual centre point
         // but writes originX:'left', originY:'top'. Correct both axes so
         // every object renders where the admin designed it.
-        //   - text/i-text: centre horizontally, top-anchored vertically
-        //   - image:       centre on both axes
+        //   - text/i-text:  centre horizontally, top-anchored vertically
+        //   - image/shapes: centre on both axes
         const TEXT_TYPES = ['text', 'i-text']
+        const SHAPE_TYPES = ['rect', 'circle', 'triangle', 'ellipse', 'polygon', 'polyline', 'path', 'line', 'group']
         if (TEXT_TYPES.includes(fabricObject.type)) {
           fabricObject.set({ originX: 'center' })
-        } else if (fabricObject.type === 'image') {
+        } else if (fabricObject.type === 'image' || SHAPE_TYPES.includes(fabricObject.type)) {
           fabricObject.set({ originX: 'center', originY: 'center' })
         }
 
