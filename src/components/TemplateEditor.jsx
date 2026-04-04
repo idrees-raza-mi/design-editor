@@ -6,7 +6,7 @@ import DimensionOverlay from './DimensionOverlay'
 import DesignCanvas from './DesignCanvas'
 import SavingOverlay from './SavingOverlay'
 import SuccessOverlay from './SuccessOverlay'
-import { loadTemplate, getEditableObjects, getObjectById } from '../utils/templateLoader'
+import { loadTemplate, getObjectById } from '../utils/templateLoader'
 import { getConfig } from '../config/editorConfig'
 import { saveDesign, SAVE_STEPS_CONFIG } from '../utils/shopifyDesign'
 import { addToCart } from '../hooks/useShopifyCart'
@@ -38,7 +38,7 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
     window.__fabricCanvas = fc
 
     fc.on('mouse:down', (e) => {
-      if (e.target && e.target.editable === false) {
+      if (e.target && e.target.__permissions?.content === 'fixed') {
         setTooltipPos({ x: e.pointer.x, y: e.pointer.y })
         setTooltipVisible(true)
         setTimeout(() => setTooltipVisible(false), 2000)
@@ -46,12 +46,13 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
     })
 
     if (design.templateJSON) {
-      await loadTemplate(fc, design.templateJSON)
-      const editables = getEditableObjects(fc)
+      const { editableObjects: editables } = await loadTemplate(fc, design.templateJSON)
+
       const objs = editables.map((obj) => ({
         id: obj.id,
-        type: obj.type,
+        type: obj.type === 'i-text' || obj.type === 'text' ? 'text' : obj.type,
         label: obj.label || obj.type,
+        required: obj.required || false,
         fabricObj: obj,
         completed: false
       }))
@@ -95,7 +96,7 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
 
   async function handleProcess() {
     if (!canvas) return
-    
+
     setOverlayVisible(true)
     setSavingSteps(SAVE_STEPS_CONFIG.map(s => ({ ...s, status: 'pending' })))
     setSaveError(null)
@@ -116,7 +117,7 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
         },
         updateStep
       )
-      
+
       setSaving(true)
       try {
         await addToCart(designId, thumbnailUrl, printFileUrl)
@@ -134,8 +135,9 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
     }
   }
 
-  const selectedObj = editableObjects.find((o) => o.id === selectedFieldId)
   const completedCount = editableObjects.filter((o) => o.completed).length
+  const requiredCount = editableObjects.filter((o) => o.required).length
+  const requiredCompleted = editableObjects.filter((o) => o.required && o.completed).length
 
   return (
     <div className="editor-container">
@@ -157,6 +159,11 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
             {editableObjects.length > 0 && (
               <div className="template-progress">
                 {completedCount} of {editableObjects.length} fields completed
+                {requiredCount > 0 && (
+                  <span style={{ color: requiredCompleted < requiredCount ? '#dc2626' : '#16a34a', marginLeft: 6 }}>
+                    ({requiredCompleted}/{requiredCount} required)
+                  </span>
+                )}
               </div>
             )}
 
@@ -178,6 +185,14 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
                       {obj.type === 'text' ? 'T' : '🖼'}
                     </span>
                     <span className="template-field-label">{obj.label}</span>
+                    {obj.required && (
+                      <span
+                        style={{ color: '#dc2626', fontWeight: 'bold', marginLeft: 4 }}
+                        title="Required field"
+                      >
+                        *
+                      </span>
+                    )}
                     {obj.completed && <span className="template-field-check">✓</span>}
                   </div>
 
@@ -223,8 +238,8 @@ export default function TemplateEditor({ design, variantId, productTitle, editor
               onCanvasReady={handleCanvasReady}
             />
             {canvas && (
-              <DimensionOverlay 
-                canvasWidth={canvasWidth} 
+              <DimensionOverlay
+                canvasWidth={canvasWidth}
                 canvasHeight={canvasHeight}
               />
             )}

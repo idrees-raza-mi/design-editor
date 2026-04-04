@@ -2,6 +2,8 @@ import { useRef, useState } from 'react'
 import { fabric } from 'fabric'
 import { uploadFileToShopify } from '../utils/shopifyUpload'
 import UploadProgress from './UploadProgress'
+import { usePermissions } from '../context/PermissionsContext'
+import LockedControl from './LockedControl'
 
 const ACCEPTED = 'image/png,image/jpeg,image/webp'
 
@@ -13,8 +15,11 @@ export default function ImageUpload({ canvas, saveState }) {
   const [uploadStep, setUploadStep] = useState(0)
   const [uploadLabel, setUploadLabel] = useState('')
 
+  const { image } = usePermissions()
+  const isDisabled = !image.enabled || !image.allow_add
+
   function handleFile(file) {
-    if (!canvas || !file) return
+    if (!canvas || !file || isDisabled) return
     if (!file.type.startsWith('image/')) return
 
     setLoading(true)
@@ -39,7 +44,7 @@ export default function ImageUpload({ canvas, saveState }) {
           setUploading(true)
           setUploadStep(0)
           setUploadLabel('Preparing upload...')
-          
+
           uploadFileToShopify(file, file.name,
             (step, total, label) => {
               setUploadStep(step)
@@ -92,33 +97,38 @@ export default function ImageUpload({ canvas, saveState }) {
   return (
     <div className="upload-section">
       <span className="panel-label">Image</span>
-      <div
-        className={`upload-zone${dragging ? ' upload-zone--active' : ''}`}
-        onDrop={onDrop}
-        onDragOver={onDragOver}
-        onDragLeave={onDragLeave}
-        onClick={() => !loading && inputRef.current?.click()}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && inputRef.current?.click()}
+      <LockedControl
+        locked={isDisabled}
+        tooltip="Images not available for this template"
       >
-        {loading ? (
-          <div className="upload-spinner" aria-label="Loading image" />
-        ) : (
-          <>
-            <div className="upload-icon">↑</div>
-            <div className="upload-label">Drag & drop or click to upload</div>
-            <div className="upload-hint">PNG · JPG · WEBP</div>
-          </>
-        )}
-      </div>
-      <input
-        ref={inputRef}
-        type="file"
-        accept={ACCEPTED}
-        style={{ display: 'none' }}
-        onChange={onChange}
-      />
+        <div
+          className={`upload-zone${dragging ? ' upload-zone--active' : ''}`}
+          onDrop={onDrop}
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
+          onClick={() => !loading && inputRef.current?.click()}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && inputRef.current?.click()}
+        >
+          {loading ? (
+            <div className="upload-spinner" aria-label="Loading image" />
+          ) : (
+            <>
+              <div className="upload-icon">↑</div>
+              <div className="upload-label">Drag & drop or click to upload</div>
+              <div className="upload-hint">PNG · JPG · WEBP</div>
+            </>
+          )}
+        </div>
+        <input
+          ref={inputRef}
+          type="file"
+          accept={ACCEPTED}
+          style={{ display: 'none' }}
+          onChange={onChange}
+        />
+      </LockedControl>
       <UploadProgress
         visible={uploading}
         step={uploadStep}

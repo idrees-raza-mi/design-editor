@@ -18,20 +18,172 @@ const MOCK_CANVAS_DESIGN = {
 }
 
 const MOCK_TEMPLATE_DESIGN = {
-  name: 'Birthday Arch Template',
-  canvasWidth: 500,
-  canvasHeight: 600,
+  name: 'Wedding Invitation Template',
+  canvasWidth: 420,
+  canvasHeight: 557,
   svgClipPath: null,
-  templateJSON: null,
-  editableFields: ['Name', 'Message', 'Photo'],
-  category: 'Birthday',
+  templateJSON: {
+    version: '5.4.0',
+    schemaVersion: '2.0',
+    component_permissions: {
+      text:       { enabled: true,  allow_add: false },
+      image:      { enabled: true,  allow_add: false },
+      shape:      { enabled: false, allow_add: false },
+      background: { enabled: false }
+    },
+    canvasWidth: 420,
+    canvasHeight: 557,
+    background: '#FAF7F2',
+    objects: [
+      {
+        type: 'image',
+        element_type: 'image',
+        id: 'el-1775281554710',
+        label: null,
+        required: false,
+        editable: false,
+        permissions: {
+          content: 'fixed',
+          position: 'locked',
+          size: 'locked',
+          rotation: 'locked',
+          delete: 'no',
+          font_family: 'locked',
+          font_size: 'locked',
+          font_color: 'locked'
+        },
+        left: 214,
+        top: 113,
+        originX: 'left',
+        originY: 'top',
+        src: 'https://imprintawsbucket.s3.eu-north-1.amazonaws.com/assets/user/202501181037481714.png',
+        scaleX: 0.12930640718608893,
+        scaleY: 0.13081958949665418,
+        opacity: 1
+      },
+      {
+        type: 'i-text',
+        element_type: 'text',
+        id: 'el-1775281659478',
+        label: null,
+        required: false,
+        editable: false,
+        permissions: {
+          content: 'fixed',
+          position: 'locked',
+          size: 'locked',
+          rotation: 'locked',
+          delete: 'no',
+          font_family: 'locked',
+          font_size: 'locked',
+          font_color: 'locked'
+        },
+        left: 214,
+        top: 241,
+        originX: 'left',
+        originY: 'top',
+        text: "We're so glad",
+        fontSize: 36,
+        fontFamily: 'Lora',
+        fill: '#1C1A17',
+        fontWeight: 'normal',
+        fontStyle: 'normal'
+      },
+      {
+        type: 'i-text',
+        element_type: 'text',
+        id: 'el-1775282234845',
+        label: null,
+        required: false,
+        editable: true,
+        permissions: {
+          content: 'replaceable',
+          position: 'locked',
+          size: 'dynamic',
+          rotation: 'locked',
+          delete: 'no',
+          font_family: 'locked',
+          font_size: 'locked',
+          font_color: 'locked'
+        },
+        left: 215,
+        top: 338,
+        originX: 'left',
+        originY: 'top',
+        text: "you're here",
+        fontSize: 36,
+        fontFamily: 'Merriweather',
+        fill: '#1C1A17',
+        fontWeight: 'normal',
+        fontStyle: 'italic'
+      },
+      {
+        type: 'i-text',
+        element_type: 'text',
+        id: 'el-1775282376836',
+        label: null,
+        required: false,
+        editable: false,
+        permissions: {
+          content: 'fixed',
+          position: 'locked',
+          size: 'locked',
+          rotation: 'locked',
+          delete: 'no',
+          font_family: 'locked',
+          font_size: 'locked',
+          font_color: 'locked'
+        },
+        left: 221,
+        top: 460,
+        originX: 'left',
+        originY: 'top',
+        text: 'ELEANOR & EDWARD',
+        fontSize: 36,
+        fontFamily: 'Playfair Display',
+        fill: '#1C1A17',
+        fontWeight: 'normal',
+        fontStyle: 'normal'
+      },
+      {
+        type: 'i-text',
+        element_type: 'text',
+        id: 'el-1775282416828',
+        label: null,
+        required: false,
+        editable: false,
+        permissions: {
+          content: 'fixed',
+          position: 'locked',
+          size: 'locked',
+          rotation: 'locked',
+          delete: 'no',
+          font_family: 'locked',
+          font_size: 'locked',
+          font_color: 'locked'
+        },
+        left: 212,
+        top: 515,
+        originX: 'left',
+        originY: 'top',
+        text: '10 MAY 2027',
+        fontSize: 22,
+        fontFamily: 'Playfair Display',
+        fill: '#1C1A17',
+        fontWeight: 'normal',
+        fontStyle: 'normal'
+      }
+    ]
+  },
+  editableFields: ["you're here"],
+  category: 'Wedding',
   availableSizes: [
     { id: '1', label: 'Small', price: '£39.99' },
     { id: '2', label: 'Medium', price: '£59.99' },
     { id: '3', label: 'Large', price: '£89.99' }
   ],
   printProfile: 'Premium Glossy',
-  description: 'Beautiful birthday arch design with customizable text and photo areas. Perfect for memorable celebrations.'
+  description: 'Elegant wedding invitation template with customizable text. Perfect for memorable celebrations.'
 }
 
 function fieldsToObject(fields) {

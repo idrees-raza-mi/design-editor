@@ -3,6 +3,7 @@ import { getConfig } from './config/editorConfig'
 import { useDesignLoader } from './hooks/useDesignLoader'
 import CustomCanvasEditor from './components/CustomCanvasEditor'
 import TemplateEditor from './components/TemplateEditor'
+import { PermissionsProvider } from './context/PermissionsContext'
 import { preloadAllFonts } from './utils/fontLoader'
 import './styles/main.css'
 
@@ -45,25 +46,33 @@ export default function App() {
     )
   }
 
+  const componentPermissions = designType === 'template'
+    ? design?.templateJSON?.component_permissions ?? null
+    : null
+
   if (designType === 'canvas') {
     return (
-      <CustomCanvasEditor
-        design={design}
-        variantId={getConfig().variantId}
-        productTitle={getConfig().productTitle}
-        editorTitle="Design Editor"
-      />
+      <PermissionsProvider permissions={componentPermissions}>
+        <CustomCanvasEditor
+          design={design}
+          variantId={getConfig().variantId}
+          productTitle={getConfig().productTitle}
+          editorTitle="Design Editor"
+        />
+      </PermissionsProvider>
     )
   }
 
   if (designType === 'template') {
     return (
-      <TemplateEditor
-        design={design}
-        variantId={getConfig().variantId}
-        productTitle={getConfig().productTitle}
-        editorTitle="Template Editor"
-      />
+      <PermissionsProvider permissions={componentPermissions}>
+        <TemplateEditor
+          design={design}
+          variantId={getConfig().variantId}
+          productTitle={getConfig().productTitle}
+          editorTitle="Template Editor"
+        />
+      </PermissionsProvider>
     )
   }
 

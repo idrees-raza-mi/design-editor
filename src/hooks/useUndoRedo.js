@@ -1,7 +1,25 @@
 import { useRef, useState, useCallback, useEffect } from 'react'
 
 const HISTORY_LIMIT = 30
-const CUSTOM_PROPS = ['id', 'editable', 'clipPath', 'lockMovementX', 'lockMovementY']
+const CUSTOM_PROPS = [
+  'id', 'editable', 'clipPath',
+  '__permissions',
+  '__elementType',
+  '__preventDelete',
+  '__fontFamilyLocked',
+  '__fontSizeLocked',
+  '__fontColorLocked',
+  'lockMovementX',
+  'lockMovementY',
+  'lockScalingX',
+  'lockScalingY',
+  'lockRotation',
+  'hasControls',
+  'hasBorders',
+  'selectable',
+  'evented',
+  'hoverCursor'
+]
 
 export function useUndoRedo() {
   const historyRef = useRef([])

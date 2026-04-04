@@ -7,6 +7,7 @@ import {
   isLowResolution
 } from '../utils/imageTools'
 import TextControls from './TextControls'
+import LockedControl from './LockedControl'
 
 const FILTERS = ['none', 'grayscale', 'sepia', 'invert', 'brightness', 'contrast']
 
@@ -114,9 +115,100 @@ export default function PropertiesPanel({ canvas, saveState }) {
     )
   }
 
+  const perms = selectedObject.__permissions
+
+  // Fixed objects are not selectable so they won't appear here,
+  // but guard anyway in case of edge cases.
+  if (perms?.content === 'fixed') {
+    return null
+  }
+
   const isImage = selectedObject instanceof fabric.Image
   const isText = selectedObject instanceof fabric.Text
 
+  // Replaceable: show simplified panel
+  if (perms?.content === 'replaceable') {
+    return (
+      <div className="properties-panel">
+        <span className="panel-label">Properties</span>
+
+        {isText && (
+          <TextControls
+            canvas={canvas}
+            selectedObject={selectedObject}
+            saveState={saveState}
+            permissions={perms}
+          />
+        )}
+
+        {isImage && (
+          <div className="prop-section">
+            <div className="prop-section-title">Replace Image</div>
+            <label className="template-replace-btn" style={{ cursor: 'pointer' }}>
+              Replace Photo
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  const file = e.target.files[0]
+                  if (!file) return
+                  const newUrl = URL.createObjectURL(file)
+                  const left = selectedObject.left
+                  const top = selectedObject.top
+                  const scaleX = selectedObject.scaleX
+                  const scaleY = selectedObject.scaleY
+                  const angle = selectedObject.angle
+                  selectedObject.setSrc(newUrl, () => {
+                    selectedObject.set({ left, top, scaleX, scaleY, angle })
+                    canvas.renderAll()
+                    saveState(canvas)
+                  }, { crossOrigin: 'anonymous' })
+                  e.target.value = ''
+                }}
+              />
+            </label>
+          </div>
+        )}
+
+        <div className="prop-section">
+          <div className="prop-section-title">Position</div>
+          <div className="prop-row">
+            <label className="prop-label">X</label>
+            <LockedControl locked={perms?.position === 'locked'} tooltip="Position fixed by template">
+              <input
+                className="prop-number"
+                type="number"
+                value={posX}
+                onChange={(e) => handlePosChange('x', e.target.value)}
+              />
+            </LockedControl>
+          </div>
+          <div className="prop-row">
+            <label className="prop-label">Y</label>
+            <LockedControl locked={perms?.position === 'locked'} tooltip="Position fixed by template">
+              <input
+                className="prop-number"
+                type="number"
+                value={posY}
+                onChange={(e) => handlePosChange('y', e.target.value)}
+              />
+            </LockedControl>
+          </div>
+        </div>
+
+        <div className="prop-section">
+          <LockedControl locked={perms?.delete === 'no'} tooltip="This element cannot be deleted">
+            <button className="prop-delete-btn" onClick={handleDelete}>
+              Delete Object
+            </button>
+          </LockedControl>
+        </div>
+      </div>
+    )
+  }
+
+  // full_control or no permissions (custom mode)
   return (
     <div className="properties-panel">
       <span className="panel-label">Properties</span>
@@ -126,6 +218,7 @@ export default function PropertiesPanel({ canvas, saveState }) {
           canvas={canvas}
           selectedObject={selectedObject}
           saveState={saveState}
+          permissions={perms}
         />
       )}
 
@@ -192,28 +285,34 @@ export default function PropertiesPanel({ canvas, saveState }) {
         <div className="prop-section-title">Position</div>
         <div className="prop-row">
           <label className="prop-label">X</label>
-          <input
-            className="prop-number"
-            type="number"
-            value={posX}
-            onChange={(e) => handlePosChange('x', e.target.value)}
-          />
+          <LockedControl locked={perms?.position === 'locked'} tooltip="Position fixed by template">
+            <input
+              className="prop-number"
+              type="number"
+              value={posX}
+              onChange={(e) => handlePosChange('x', e.target.value)}
+            />
+          </LockedControl>
         </div>
         <div className="prop-row">
           <label className="prop-label">Y</label>
-          <input
-            className="prop-number"
-            type="number"
-            value={posY}
-            onChange={(e) => handlePosChange('y', e.target.value)}
-          />
+          <LockedControl locked={perms?.position === 'locked'} tooltip="Position fixed by template">
+            <input
+              className="prop-number"
+              type="number"
+              value={posY}
+              onChange={(e) => handlePosChange('y', e.target.value)}
+            />
+          </LockedControl>
         </div>
       </div>
 
       <div className="prop-section">
-        <button className="prop-delete-btn" onClick={handleDelete}>
-          Delete Object
-        </button>
+        <LockedControl locked={perms?.delete === 'no'} tooltip="This element cannot be deleted">
+          <button className="prop-delete-btn" onClick={handleDelete}>
+            Delete Object
+          </button>
+        </LockedControl>
       </div>
     </div>
   )

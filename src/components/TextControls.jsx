@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { FONT_LIST, loadFont } from '../utils/fontLoader'
+import LockedControl from './LockedControl'
 
-export default function TextControls({ canvas, selectedObject, saveState }) {
+export default function TextControls({ canvas, selectedObject, saveState, permissions }) {
   const [fontFamily, setFontFamily] = useState('Montserrat')
   const [fontSize, setFontSize] = useState(36)
   const [color, setColor] = useState('#000000')
@@ -104,65 +105,89 @@ export default function TextControls({ canvas, selectedObject, saveState }) {
     saveState(canvas)
   }
 
+  // Style buttons (Bold/Italic/Underline) locked when content is fixed or replaceable
+  const styleButtonsLocked = permissions?.content === 'fixed' || permissions?.content === 'replaceable'
+
   return (
     <>
       <div className="prop-section">
         <div className="prop-section-title">Font</div>
-        <select className="font-picker" value={fontFamily} onChange={handleFontFamily}>
-          {FONT_LIST.map((f) => (
-            <option key={f} value={f} style={{ fontFamily: f }}>
-              {f}
-            </option>
-          ))}
-        </select>
+        <LockedControl
+          locked={permissions?.font_family === 'locked'}
+          tooltip="Font fixed by template"
+        >
+          <select className="font-picker" value={fontFamily} onChange={handleFontFamily}>
+            {FONT_LIST.map((f) => (
+              <option key={f} value={f} style={{ fontFamily: f }}>
+                {f}
+              </option>
+            ))}
+          </select>
+        </LockedControl>
       </div>
 
       <div className="prop-section">
         <div className="prop-section-title">Size &amp; Color</div>
         <div className="prop-row">
           <label className="prop-label">Sz</label>
-          <input
-            className="prop-number"
-            type="number"
-            min={8}
-            max={300}
-            value={fontSize}
-            onChange={handleFontSize}
-          />
-          <input
-            className="text-color-picker"
-            type="color"
-            value={color}
-            onChange={handleColor}
-            title="Text color"
-          />
+          <LockedControl
+            locked={permissions?.font_size === 'locked'}
+            tooltip="Font size fixed by template"
+          >
+            <input
+              className="prop-number"
+              type="number"
+              min={8}
+              max={300}
+              value={fontSize}
+              onChange={handleFontSize}
+            />
+          </LockedControl>
+          <LockedControl
+            locked={permissions?.font_color === 'locked'}
+            tooltip="Colour fixed by template"
+          >
+            <input
+              className="text-color-picker"
+              type="color"
+              value={color}
+              onChange={handleColor}
+              title="Text color"
+            />
+          </LockedControl>
         </div>
       </div>
 
       <div className="prop-section">
         <div className="prop-section-title">Style</div>
         <div className="text-style-buttons">
-          <button
-            className={`text-style-btn${bold ? ' text-style-btn--active' : ''}`}
-            onClick={toggleBold}
-            title="Bold"
-          >
-            <strong>B</strong>
-          </button>
-          <button
-            className={`text-style-btn${italic ? ' text-style-btn--active' : ''}`}
-            onClick={toggleItalic}
-            title="Italic"
-          >
-            <em>I</em>
-          </button>
-          <button
-            className={`text-style-btn${underline ? ' text-style-btn--active' : ''}`}
-            onClick={toggleUnderline}
-            title="Underline"
-          >
-            <span style={{ textDecoration: 'underline' }}>U</span>
-          </button>
+          <LockedControl locked={styleButtonsLocked} tooltip="Style fixed by template">
+            <button
+              className={`text-style-btn${bold ? ' text-style-btn--active' : ''}`}
+              onClick={toggleBold}
+              title="Bold"
+            >
+              <strong>B</strong>
+            </button>
+          </LockedControl>
+          <LockedControl locked={styleButtonsLocked} tooltip="Style fixed by template">
+            <button
+              className={`text-style-btn${italic ? ' text-style-btn--active' : ''}`}
+              onClick={toggleItalic}
+              title="Italic"
+            >
+              <em>I</em>
+            </button>
+          </LockedControl>
+          <LockedControl locked={styleButtonsLocked} tooltip="Style fixed by template">
+            <button
+              className={`text-style-btn${underline ? ' text-style-btn--active' : ''}`}
+              onClick={toggleUnderline}
+              title="Underline"
+            >
+              <span style={{ textDecoration: 'underline' }}>U</span>
+            </button>
+          </LockedControl>
         </div>
       </div>
 

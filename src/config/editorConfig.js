@@ -1,6 +1,6 @@
 const DEV_DEFAULTS = {
-  designId: 'test-123',
-  designType: 'canvas',
+  designId: 'test-template-1',
+  designType: 'template',
   variantId: null,
   productTitle: 'Test Product'
 }

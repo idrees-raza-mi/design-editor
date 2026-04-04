@@ -45,6 +45,8 @@ export function useFabricCanvas(canvasElementRef, { width, height } = {}) {
       if ((e.key === 'Delete' || e.key === 'Backspace') && !e.ctrlKey && !e.metaKey) {
         const active = fc.getActiveObject()
         if (!active) return
+        if (active.__preventDelete === true) return
+        if (active.__permissions?.delete === 'no') return
         if (active.type === 'activeSelection') {
           active.forEachObject((obj) => fc.remove(obj))
           fc.discardActiveObject()
