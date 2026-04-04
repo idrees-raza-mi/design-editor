@@ -37,12 +37,16 @@ export function loadTemplate(canvas, templateJSON) {
         const sourceObj = sourceObjects.find((o) => o.id === fabricObject.id)
         const permissions = sourceObj?.permissions || null
 
-        // The admin tool always exports text positions as the visual centre
-        // point but writes originX:'left'. Correct this so text renders
-        // centred as designed, regardless of what the JSON says.
+        // The admin tool always exports positions as the visual centre point
+        // but writes originX:'left', originY:'top'. Correct both axes so
+        // every object renders where the admin designed it.
+        //   - text/i-text: centre horizontally, top-anchored vertically
+        //   - image:       centre on both axes
         const TEXT_TYPES = ['text', 'i-text']
         if (TEXT_TYPES.includes(fabricObject.type)) {
           fabricObject.set({ originX: 'center' })
+        } else if (fabricObject.type === 'image') {
+          fabricObject.set({ originX: 'center', originY: 'center' })
         }
 
         if (permissions) {
