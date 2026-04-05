@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
-import { copyFileSync, mkdirSync, existsSync, readdirSync } from 'fs'
+import { copyFileSync, mkdirSync, existsSync, readdirSync, readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
 
 function copyDirRecursive(src, dest) {
@@ -28,6 +28,12 @@ export default defineConfig({
       closeBundle() {
         copyDirRecursive('public/fonts', 'dist/fonts')
         copyDirRecursive('public/text-wrapper', 'dist/text-wrapper')
+        // Copy test.html as index.html so the hosted URL doesn't 404
+        const testHtml = readFileSync('test.html', 'utf8')
+        const prodHtml = testHtml
+          .replace('./dist/editor.css', './editor.css')
+          .replace('./dist/editor.js', './editor.js')
+        writeFileSync('dist/index.html', prodHtml)
       }
     }
   ],
