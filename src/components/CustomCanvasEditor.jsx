@@ -313,37 +313,29 @@ export default function CustomCanvasEditor({ design, variantId, productTitle, ed
         </main>
         <div className="canvas-area-controls">
           <div className="canvas-zoom-controls">
-            <button 
-              className="canvas-zoom-btn" 
+            <button
+              className="canvas-zoom-btn"
               onClick={() => canvas?.handleZoom?.(zoomLevel - 10)}
               disabled={zoomLevel <= 60}
               title="Zoom Out (Ctrl+-)"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
+              <span className="canvas-zoom-icon">−</span>
             </button>
             <span className="canvas-zoom-level">{zoomLevel}%</span>
-            <button 
-              className="canvas-zoom-btn" 
+            <button
+              className="canvas-zoom-btn"
               onClick={() => canvas?.handleZoom?.(zoomLevel + 10)}
               disabled={zoomLevel >= 500}
               title="Zoom In (Ctrl++)"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
+              <span className="canvas-zoom-icon">+</span>
             </button>
-            <button 
-              className="canvas-zoom-btn" 
+            <button
+              className="canvas-zoom-btn"
               onClick={() => canvas?.handleZoom?.(100)}
               title="Reset Zoom (Ctrl+0)"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-                <path d="M3 3v5h5"/>
-              </svg>
+              <span className="canvas-zoom-icon">↺</span>
             </button>
           </div>
         </div>
