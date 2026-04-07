@@ -4,7 +4,19 @@
       "Bash(grep -E \"\\\\.jsx$\")",
       "Bash(node -e \"const opentype = require\\(''''./node_modules/opentype.js/dist/opentype.min.js''''\\); console.log\\(''''ok''''\\);\")",
       "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(''''version:'''', d.get\\(''''version''''\\)\\); print\\(''''main:'''', d.get\\(''''main''''\\)\\)\")",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(netlify --version)",
+      "Bash(npm install:*)",
+      "Bash(NETLIFY_AUTH_TOKEN=nfp_3dNxeQz7hozeGHibEv6YMVFaNcJqegaXd624 npx netlify-cli@latest deploy --dir dist --functions netlify/functions --prod)",
+      "Bash(NETLIFY_AUTH_TOKEN=nfp_3dNxeQz7hozeGHibEv6YMVFaNcJqegaXd624 netlify sites:create --name design-editor-eventbesties --json)",
+      "Bash(where netlify:*)",
+      "Bash(npx --yes netlify-cli --version)",
+      "Bash(node -e ':*)",
+      "Bash(node:*)",
+      "Bash(NETLIFY_TOKEN=nfp_3dNxeQz7hozeGHibEv6YMVFaNcJqegaXd624 node netlify-deploy.js)",
+      "Bash(NETLIFY_TOKEN=nfp_3dNxeQz7hozeGHibEv6YMVFaNcJqegaXd624 node netlify-deploy.cjs)",
+      "Bash(rm \"C:\\\\Users\\\\Idrees raza\\\\OneDrive\\\\Desktop\\\\testing-editor\\\\design-editor\\\\netlify-deploy.cjs\")",
+      "Bash(npm uninstall:*)"
     ]
   }
 }
