@@ -16,7 +16,16 @@
       "Bash(NETLIFY_TOKEN=nfp_3dNxeQz7hozeGHibEv6YMVFaNcJqegaXd624 node netlify-deploy.js)",
       "Bash(NETLIFY_TOKEN=nfp_3dNxeQz7hozeGHibEv6YMVFaNcJqegaXd624 node netlify-deploy.cjs)",
       "Bash(rm \"C:\\\\Users\\\\Idrees raza\\\\OneDrive\\\\Desktop\\\\testing-editor\\\\design-editor\\\\netlify-deploy.cjs\")",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(NETLIFY_AUTH_TOKEN=nfp_2zmEdCLAU6PtqMHJ3WucJhCgzReGobDva4d3 netlify env:set VITE_PROXY_URL https://design-editor-eventbesties.netlify.app)",
+      "Bash(NETLIFY_AUTH_TOKEN=nfp_2zmEdCLAU6PtqMHJ3WucJhCgzReGobDva4d3 netlify link)",
+      "Bash(NETLIFY_AUTH_TOKEN=nfp_2zmEdCLAU6PtqMHJ3WucJhCgzReGobDva4d3 netlify sites:list)",
+      "Bash(NETLIFY_AUTH_TOKEN=nfp_2zmEdCLAU6PtqMHJ3WucJhCgzReGobDva4d3 netlify env:list)",
+      "Bash(NETLIFY_AUTH_TOKEN=nfp_2zmEdCLAU6PtqMHJ3WucJhCgzReGobDva4d3 netlify env:set SHOPIFY_STORE_URL event-besties-store.myshopify.com)",
+      "Bash(NETLIFY_AUTH_TOKEN=nfp_2zmEdCLAU6PtqMHJ3WucJhCgzReGobDva4d3 netlify deploy --prod --dir=dist)",
+      "Bash(NETLIFY_AUTH_TOKEN=nfp_2zmEdCLAU6PtqMHJ3WucJhCgzReGobDva4d3 netlify deploy --prod --dir=dist --skip-functions-cache)",
+      "Bash(curl -s -X OPTIONS \"https://design-editor-eventbesties.netlify.app/.netlify/functions/shopify\" -H \"Origin: https://event-besties-store.myshopify.com\" -H \"Access-Control-Request-Method: POST\" -H \"Access-Control-Request-Headers: Content-Type\" -i)",
+      "Bash(grep -o \"netlify/functions/shopify.\\\\{0,100\\\\}\" \"C:\\\\Users\\\\Idrees raza\\\\OneDrive\\\\Desktop\\\\testing-editor\\\\design-editor\\\\dist\\\\editor.js\")"
     ]
   }
 }

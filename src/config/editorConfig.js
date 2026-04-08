@@ -8,13 +8,20 @@ export function getConfig() {
     )
   }
 
-  if (!raw.designId) throw new Error('[DesignEditor] __EDITOR_CONFIG__.designId is required')
-  if (!raw.designType) throw new Error('[DesignEditor] __EDITOR_CONFIG__.designType is required')
+  const productHandle = raw.productHandle || null
+
+  if (!productHandle && !raw.designId) {
+    throw new Error('[DesignEditor] __EDITOR_CONFIG__ requires either productHandle or designId')
+  }
+  if (!productHandle && !raw.designType) {
+    throw new Error('[DesignEditor] __EDITOR_CONFIG__.designType is required when using designId')
+  }
 
   return {
-    designId: raw.designId,
-    designType: raw.designType,
+    designId: raw.designId || null,
+    designType: raw.designType || null,
     variantId: raw.variantId ?? null,
-    productTitle: raw.productTitle ?? ''
+    productTitle: raw.productTitle ?? '',
+    productHandle,
   }
 }

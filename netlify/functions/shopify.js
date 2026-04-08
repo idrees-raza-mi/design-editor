@@ -118,6 +118,9 @@ exports.handler = async (event) => {
             }
           }`
         const result = await shopifyRequest(query, { id: data.id })
+        if (!result.metaobject) {
+          return { statusCode: 404, headers, body: JSON.stringify({ error: `Metaobject not found: ${data.id}` }) }
+        }
         return { statusCode: 200, headers, body: JSON.stringify(result.metaobject) }
       }
 

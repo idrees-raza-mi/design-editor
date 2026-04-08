@@ -11,6 +11,7 @@ export default function App() {
   const { productTitle } = getConfig()
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
+  const [selectedVariantId, setSelectedVariantId] = useState(() => getConfig().variantId)
 
   const { design, designType, loading, error, retry } = useDesignLoader()
 
@@ -21,6 +22,9 @@ export default function App() {
   useEffect(() => {
     if (design && designType) {
       console.log('Design loaded:', designType, design)
+    }
+    if (design && !selectedVariantId && design.availableSizes?.[0]?.variantId) {
+      setSelectedVariantId(design.availableSizes[0].variantId)
     }
   }, [design, designType])
 
@@ -55,9 +59,12 @@ export default function App() {
       <PermissionsProvider permissions={componentPermissions}>
         <CustomCanvasEditor
           design={design}
-          variantId={getConfig().variantId}
+          variantId={selectedVariantId}
           productTitle={getConfig().productTitle}
           editorTitle="Design Editor"
+          availableSizes={design?.availableSizes || []}
+          selectedVariantId={selectedVariantId}
+          onVariantChange={(variant) => setSelectedVariantId(variant.id)}
         />
       </PermissionsProvider>
     )
@@ -68,9 +75,12 @@ export default function App() {
       <PermissionsProvider permissions={componentPermissions}>
         <TemplateEditor
           design={design}
-          variantId={getConfig().variantId}
+          variantId={selectedVariantId}
           productTitle={getConfig().productTitle}
           editorTitle="Template Editor"
+          availableSizes={design?.availableSizes || []}
+          selectedVariantId={selectedVariantId}
+          onVariantChange={(variant) => setSelectedVariantId(variant.id)}
         />
       </PermissionsProvider>
     )

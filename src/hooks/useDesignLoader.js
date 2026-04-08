@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getConfig } from '../config/editorConfig'
-import { fetchCanvasDesign, fetchTemplateDesign } from '../services/shopifyStorefront'
+import { fetchCanvasDesign, fetchTemplateDesign, fetchProductDesign } from '../services/shopifyStorefront'
 
 export function useDesignLoader() {
   const [loading, setLoading] = useState(true)
@@ -11,18 +11,36 @@ export function useDesignLoader() {
   function loadDesign() {
     setLoading(true)
     setError(null)
-    const { designId, designType: type } = getConfig()
 
     Promise.resolve()
       .then(async () => {
-        if (type === 'canvas') {
-          const d = await fetchCanvasDesign(designId)
-          setDesign(d)
-        } else if (type === 'template') {
-          const d = await fetchTemplateDesign(designId)
-          setDesign(d)
+        const { designId, designType, productHandle } = getConfig()
+
+        // NEW flow — product metafield
+        if (productHandle) {
+          const design = await fetchProductDesign(productHandle)
+          setDesign(design)
+          setDesignType(design.designType)
+          setLoading(false)
+          return
         }
-        setDesignType(type)
+
+        // OLD flow — metaobject GID (backwards compatible)
+        if (designId) {
+          if (designType === 'canvas') {
+            const design = await fetchCanvasDesign(designId)
+            setDesign(design)
+            setDesignType('canvas')
+          } else {
+            const design = await fetchTemplateDesign(designId)
+            setDesign(design)
+            setDesignType('template')
+          }
+          setLoading(false)
+          return
+        }
+
+        setError('No product or design ID found in editor config.')
         setLoading(false)
       })
       .catch(err => {

@@ -5,14 +5,122 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Design Editor – Test</title>
-  <!-- <script src="./dist/fabric.min.js"></script> -->
   <link rel="stylesheet" href="./dist/editor.css" />
   <script>
     window.__EDITOR_CONFIG__ = {
-      designId: 'test-123',
-      designType: 'canvas',
+      productHandle: 'test-product',
+      designType: 'template',
       variantId: null,
-      productTitle: 'Bear Board 2FT'
+      productTitle: 'Disney Princess Template',
+      // Mock template JSON - simulates what comes from Shopify metafield
+      mockTemplateJSON: {
+        "version": "5.4.0",
+        "schemaVersion": "2.0",
+        "component_permissions": {
+          "text": {
+            "enabled": true,
+            "allow_add": false
+          },
+          "image": {
+            "enabled": true,
+            "allow_add": false
+          },
+          "shape": {
+            "enabled": false,
+            "allow_add": false
+          },
+          "background": {
+            "enabled": false
+          }
+        },
+        "canvasWidth": 880,
+        "canvasHeight": 1820,
+        "background": "#FAF7F2",
+        "objects": [
+          {
+            "type": "image",
+            "element_type": "image",
+            "id": "el-1775675787454",
+            "label": null,
+            "required": false,
+            "editable": false,
+            "permissions": {
+              "content": "fixed",
+              "position": "locked",
+              "size": "locked",
+              "rotation": "locked",
+              "delete": "no",
+              "font_family": "locked",
+              "font_size": "locked",
+              "font_color": "locked"
+            },
+            "left": 435,
+            "top": 907,
+            "originX": "left",
+            "originY": "top",
+            "src": "https://via.placeholder.com/400x600/FFB6C1/fff?text=Princess+Image",
+            "scaleX": 0.3,
+            "scaleY": 0.3,
+            "opacity": 1
+          },
+          {
+            "type": "i-text",
+            "element_type": "text",
+            "id": "el-1775675810822",
+            "label": null,
+            "required": false,
+            "editable": false,
+            "permissions": {
+              "content": "fixed",
+              "position": "dynamic",
+              "size": "dynamic",
+              "rotation": "dynamic",
+              "delete": "no",
+              "font_family": "locked",
+              "font_size": "locked",
+              "font_color": "locked"
+            },
+            "left": 447,
+            "top": 480,
+            "originX": "left",
+            "originY": "top",
+            "text": "Happy Birthday",
+            "fontSize": 48,
+            "fontFamily": "Playfair Display",
+            "fill": "#cb1010",
+            "fontWeight": "normal",
+            "fontStyle": "normal"
+          },
+          {
+            "type": "i-text",
+            "element_type": "text",
+            "id": "el-1775675876045",
+            "label": null,
+            "required": false,
+            "editable": true,
+            "permissions": {
+              "content": "replaceable",
+              "position": "locked",
+              "size": "locked",
+              "rotation": "locked",
+              "delete": "no",
+              "font_family": "locked",
+              "font_size": "locked",
+              "font_color": "locked"
+            },
+            "left": 525,
+            "top": 677,
+            "originX": "left",
+            "originY": "top",
+            "text": "Your Name Here",
+            "fontSize": 48,
+            "fontFamily": "Playfair Display",
+            "fill": "#d80e0e",
+            "fontWeight": "normal",
+            "fontStyle": "normal"
+          }
+        ]
+      }
     }
   </script>
   <style>

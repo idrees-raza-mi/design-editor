@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && sed 's|./dist/editor\\.css|./editor.css|g;s|./dist/editor\\.js|./editor.js|g' test.html > dist/index.html",
     "preview": "vite preview"
   },
   "dependencies": {

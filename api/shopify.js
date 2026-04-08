@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
   const STORE = process.env.SHOPIFY_STORE_URL
   const TOKEN = process.env.SHOPIFY_ADMIN_TOKEN
-  const ENDPOINT = `https://${STORE}/admin/api/2024-01/graphql.json`
+  const ENDPOINT = `https://${STORE}/admin/api/2026-01/graphql.json`
 
   const shopifyRequest = async (query, variables) => {
     const r = await fetch(ENDPOINT, {
